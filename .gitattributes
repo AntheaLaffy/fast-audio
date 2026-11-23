@@ -51,3 +51,6 @@ benchmarks/results/2026-10-20-cpu-prepared-abi-*/compiler-comment.txt -text whit
 benchmarks/results/2026-10-20-cpu-prepared-initial-targeted.log -text whitespace=-blank-at-eof
 benchmarks/results/2026-10-20-cpu-prepared-intel-verification/07-miri-pointwise/stdout.log -text whitespace=-blank-at-eof
 benchmarks/results/2026-10-20-cpu-prepared-intel-verification/08-miri-reduce/stdout.log -text whitespace=-blank-at-eof
+# Exclude the developer website and vendored upstream model snapshots from GitHub language stats.
+website/** linguist-documentation
+models/gtcrn/*.py linguist-vendored
