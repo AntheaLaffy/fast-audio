@@ -44,7 +44,7 @@ impl SdpaSpec {
         if num_kv_heads == 0 && (num_heads > 0 || (batch > 0 && seq_k > 0)) {
             return Err(invalid("sdpa num_kv_heads must be positive"));
         }
-        if num_kv_heads > 0 && num_heads % num_kv_heads != 0 {
+        if num_kv_heads > 0 && !num_heads.is_multiple_of(num_kv_heads) {
             return Err(invalid("sdpa num_heads must be divisible by num_kv_heads"));
         }
         if seq_k == 0 && batch > 0 && num_heads > 0 && seq_q > 0 {

@@ -58,7 +58,7 @@ pub fn padded(dims: &[usize], seed: usize) -> Layout {
         if dims[a] == 1 {
             continue;
         }
-        strides[a] = if (a + seed) % 2 == 0 {
+        strides[a] = if (a + seed).is_multiple_of(2) {
             step as isize
         } else {
             origin += (dims[a] - 1) * step;
@@ -98,7 +98,7 @@ pub fn buffer(layout: &Layout, salt: usize, positive: bool) -> Tensor {
         (0..len)
             .map(|i| {
                 let x = 0.25 + ((i * 31 + salt * 17) % 101) as f32 / 67.;
-                if positive || (i + salt) % 2 == 0 {
+                if positive || (i + salt).is_multiple_of(2) {
                     x
                 } else {
                     -x

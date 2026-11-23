@@ -14,7 +14,9 @@ Review new public abstractions against a concrete downstream use. Record ownersh
 
 ## CI responsibilities
 
-On pull requests and pushes to main, GitHub Actions selects checks from changed paths. Rust changes run formatting, portable tests and doctests, and a check of all default targets at the declared minimum Rust version. Website changes run the locked Node install, TypeScript check and static build. Packaging changes also verify a Cargo source archive. Documentation changes can pass the shared CI gate without rebuilding the runtime.
+On pull requests and pushes to main, GitHub Actions selects checks from changed paths. Rust changes run formatting, Clippy, portable tests and doctests, and a check of all default targets at the declared minimum Rust version. Website changes run the locked Node install, TypeScript check and static build. Packaging changes also verify a Cargo source archive. Documentation changes can pass the shared CI gate without rebuilding the runtime.
+
+The protected `main` branch requires an up-to-date pull request and the GitHub Actions `CI gate` check, including for administrators. A solo maintainer can merge a passing pull request without a second reviewer. Force pushes and branch deletion are disabled.
 
 The public runner verifies the portable backend. Run hardware-specific correctness or benchmark work on qualifying changes using the separate CPU and GPU environments in [the hardware protocol](colab-hardware-evaluation.md). Link the matching numerical, resource and performance evidence to the release decision. A portable CI result alone qualifies only the portable path.
 

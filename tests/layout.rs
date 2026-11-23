@@ -153,7 +153,7 @@ fn reshape_acceptance_matches_independent_affine_feasibility() {
             vec![2, count / 2],
             vec![count / 2, 1, 2],
         ];
-        if count % 3 == 0 {
+        if count.is_multiple_of(3) {
             targets.push(vec![3, count / 3]);
         }
         for strides in stride_vectors(dims.len()) {

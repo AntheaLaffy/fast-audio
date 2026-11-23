@@ -80,7 +80,11 @@ pub fn layout3(dims: [usize; 3], style: usize) -> Layout {
     };
     for axis in 0..3 {
         if dims[axis] == 1 {
-            steps[axis] = if style % 2 == 0 { 0 } else { steps[axis] };
+            steps[axis] = if style.is_multiple_of(2) {
+                0
+            } else {
+                steps[axis]
+            };
         }
     }
     if origin == 0 {
@@ -128,7 +132,11 @@ pub fn layout4(dims: [usize; 4], style: usize) -> Layout {
     };
     for axis in 0..4 {
         if dims[axis] == 1 {
-            steps[axis] = if style % 2 == 0 { 0 } else { steps[axis] };
+            steps[axis] = if style.is_multiple_of(2) {
+                0
+            } else {
+                steps[axis]
+            };
         }
     }
     if origin == 0 {

@@ -153,7 +153,7 @@ fn ref_istft_f64(
     window: &[f64],
 ) -> Vec<f64> {
     let bins = n / 2 + 1;
-    let even_n = n % 2 == 0;
+    let even_n = n.is_multiple_of(2);
     let mut envelope = vec![0.0f64; output_len];
     for f in 0..frames {
         for (t, &w) in window.iter().enumerate() {
@@ -211,7 +211,7 @@ fn ref_istft_backward_f64(
     window: &[f64],
 ) -> Vec<f64> {
     let bins = n / 2 + 1;
-    let even_n = n % 2 == 0;
+    let even_n = n.is_multiple_of(2);
     let mut envelope = vec![0.0f64; output_len];
     for f in 0..frames {
         for (t, &w) in window.iter().enumerate() {

@@ -76,7 +76,9 @@ impl Conv1dSpec {
             int(x)?;
         }
         int(self.padding)?;
-        if self.in_channels % self.groups != 0 || self.out_channels % self.groups != 0 {
+        if !self.in_channels.is_multiple_of(self.groups)
+            || !self.out_channels.is_multiple_of(self.groups)
+        {
             return Err(invalid("groups must divide input and output channels"));
         }
         let receptive = (self.kernel - 1)
@@ -182,7 +184,9 @@ impl ConvTranspose1dSpec {
         }
         int(self.padding)?;
         int(self.output_padding)?;
-        if self.in_channels % self.groups != 0 || self.out_channels % self.groups != 0 {
+        if !self.in_channels.is_multiple_of(self.groups)
+            || !self.out_channels.is_multiple_of(self.groups)
+        {
             return Err(invalid("groups must divide both channel counts"));
         }
         if self.output_padding >= self.stride && self.output_padding >= self.dilation {

@@ -308,7 +308,7 @@ impl Builder {
         let &[b, c, t, f] = self.shape(input)? else {
             return Err(invalid("frequency unfold needs NCHW"));
         };
-        if kernel == 0 || kernel % 2 == 0 {
+        if kernel == 0 || kernel.is_multiple_of(2) {
             return Err(invalid("frequency kernel must be positive and odd"));
         }
         let outc = c

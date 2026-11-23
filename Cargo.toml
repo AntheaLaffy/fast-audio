@@ -13,7 +13,7 @@ categories = ["science", "multimedia::audio"]
 include = [
     "/Cargo.toml", "/Cargo.lock", "/build.rs", "/LICENSE", "/README.md",
     "/src/**/*.rs", "/native/*.c", "/native/*.cpp", "/native/*.cu", "/native/*.h",
-    "/examples/**/*.rs", "/tests/*.rs", "/models/gtcrn/LICENSE",
+    "/examples/**/*.rs", "/tests/**/*.rs", "/models/gtcrn/LICENSE",
     "/benchmarks/workloads.json", "/benchmarks/protocols/training-characterization-v1.json",
 ]
 

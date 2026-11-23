@@ -444,7 +444,7 @@ impl Builder {
     pub fn group_norm(&mut self, input: Value, num_groups: usize, eps: f32) -> Result<Value> {
         let a = self.index(input)?;
         let orig_dims = self.values[a].layout.shape().dims().to_vec();
-        if orig_dims.len() < 2 || num_groups == 0 || orig_dims[1] % num_groups != 0 {
+        if orig_dims.len() < 2 || num_groups == 0 || !orig_dims[1].is_multiple_of(num_groups) {
             return Err(invalid(
                 "group_norm requires rank >= 2, num_groups > 0, and C % num_groups == 0",
             ));
