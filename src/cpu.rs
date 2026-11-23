@@ -121,7 +121,7 @@ impl Cpu {
                 .ok_or_else(|| crate::error::invalid("thread count must be positive"))?,
         })
     }
-    /// Computes C = A B; A [M,K], B [K,N], C [M,N]. C is overwritten.
+    /// Computes `C = A B` with shapes `A[M,K]`, `B[K,N]` and `C[M,N]`, overwriting C.
     pub fn matmul(&self, a: &Tensor, b: &Tensor, out: &mut Tensor) -> Result<()> {
         let (m, n, k) = matmul_dims(a.shape(), b.shape(), out.shape())?;
         if m == 0 || n == 0 {
@@ -626,7 +626,7 @@ impl Istft {
                     for (bin, pair) in input.chunks_exact(2).enumerate() {
                         buffer[bin] = Complex32::new(
                             pair[0],
-                            if bin == 0 || (s.fft_size % 2 == 0 && bin == s.fft_size / 2) {
+                            if bin == 0 || (s.fft_size.is_multiple_of(2) && bin == s.fft_size / 2) {
                                 0.0
                             } else {
                                 pair[1]

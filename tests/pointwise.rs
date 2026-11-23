@@ -195,7 +195,7 @@ fn generated_layout(dims: &[usize], seed: usize, read: bool) -> Layout {
     let mut offset = 2;
     for axis in axes {
         let sign = if (seed >> (axis % 8)) & 1 == 0 { 1 } else { -1 };
-        let stride = if read && (seed + axis) % 5 == 0 {
+        let stride = if read && (seed + axis).is_multiple_of(5) {
             0
         } else {
             step as isize * sign

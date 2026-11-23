@@ -57,7 +57,9 @@ impl Conv2dSpec {
             }
             int(value)?;
         }
-        if self.in_channels % self.groups != 0 || self.out_channels % self.groups != 0 {
+        if !self.in_channels.is_multiple_of(self.groups)
+            || !self.out_channels.is_multiple_of(self.groups)
+        {
             return Err(invalid("groups must divide both channel counts"));
         }
         let mut output = [self.batch, self.out_channels, 0, 0];

@@ -399,7 +399,7 @@ fn erb(g: &mut Builder, p: &Parameters, x: Value, synthesis: bool) -> Result<Val
 }
 
 /// Offline spectrum-to-spectrum model. Each invocation starts all recurrent states at zero.
-/// Batch and frame counts are fixed; spectra use the library's [B,T,257,2] layout.
+/// Batch and frame counts are fixed. Spectra use the library's `[B,T,257,2]` layout.
 pub fn build(batch: usize, frames: usize, parameters: &Parameters) -> Result<ModelGraph> {
     let mut g = Builder::new([batch, frames, 257, 2])?;
     let input = g.input();

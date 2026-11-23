@@ -98,9 +98,9 @@ impl Fixture {
             Formula::Unary(op) => {
                 let mut output = vec![0.; 3];
                 for i in 0..2 {
-                    for j in 0..3 {
+                    for (j, column) in output.iter_mut().enumerate() {
                         let (y, dy) = unary(op, inputs[0][i * 3 + j]);
-                        output[j] += (y * y + inputs[1][j]) / 2.;
+                        *column += (y * y + inputs[1][j]) / 2.;
                         gradients[0][i * 3 + j] = self.seed.data()[j] as f64 * y * dy;
                         gradients[1][j] = self.seed.data()[j] as f64;
                     }

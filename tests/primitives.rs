@@ -175,7 +175,7 @@ fn inverse_oracle(spec: CenteredStftSpec, spectrum: &Tensor) -> Vec<f64> {
                         s.fft_size - bin
                     };
                     let re = frequency[2 * k] as f64;
-                    let im = if k == 0 || (s.fft_size % 2 == 0 && k == s.fft_size / 2) {
+                    let im = if k == 0 || (s.fft_size.is_multiple_of(2) && k == s.fft_size / 2) {
                         0.0
                     } else {
                         frequency[2 * k + 1] as f64 * if bin == k { 1.0 } else { -1.0 }

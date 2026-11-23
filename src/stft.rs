@@ -449,7 +449,7 @@ impl StftBackwardCore {
         let s = self.spec;
         let n = s.fft_size;
         let bins = s.bins();
-        let even_n = n % 2 == 0;
+        let even_n = n.is_multiple_of(2);
         let frames_count = self.frames_count;
         let dy_data = upstream.data;
         let dyv = self.dy_view;
@@ -952,7 +952,7 @@ impl IstftPlan {
         let s = self.spec.spec();
         let n = s.fft_size;
         let bins = s.bins();
-        let even_n = n % 2 == 0;
+        let even_n = n.is_multiple_of(2);
         let frames_count = self.spec.frames();
         let in_data = input.data;
         let sv = self.s_view;
@@ -1181,7 +1181,7 @@ impl IstftBackward {
         let s = self.spec.spec();
         let n = s.fft_size;
         let bins = s.bins();
-        let even_n = n % 2 == 0;
+        let even_n = n.is_multiple_of(2);
         let frames_count = self.spec.frames();
         let padding = self.spec.padding();
         let output_len = s.input_len;

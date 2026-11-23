@@ -51,6 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cargo fmt --all -- --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked
       - run: |
           minimum=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml","rb"))["package"]["rust-version"])')
@@ -80,7 +81,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cargo package --locked
+      - run: |
+          cargo package --locked
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml","rb"))["package"]["version"])')
+          cargo check --locked --all-targets --manifest-path "target/package/fast-audio-$version/Cargo.toml"
 
   compatibility:
     needs: changes

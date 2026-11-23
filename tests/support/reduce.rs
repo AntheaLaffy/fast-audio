@@ -140,7 +140,7 @@ pub fn padded(dims: &[usize], seed: usize) -> Layout {
         if dims[a] == 1 {
             continue;
         }
-        strides[a] = if (a + seed) % 2 == 0 {
+        strides[a] = if (a + seed).is_multiple_of(2) {
             step as isize
         } else {
             origin += (dims[a] - 1) * step;
