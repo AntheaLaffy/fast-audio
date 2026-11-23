@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "name": "training-characterization-v1",
+  "purpose": "Characterize complete native forward/backward/plain-SGD steps; no promotion",
+  "atol": 2e-05,
+  "rtol": 2e-05,
+  "finite_difference_step": 0.0001,
+  "threads": 1,
+  "affinity": [
+    0
+  ],
+  "rate": 0.01,
+  "validation_steps": 8,
+  "build": {
+    "rustflags": "-C force-frame-pointers=yes -C debuginfo=1",
+    "features": {
+      "intel": [
+        "mkl"
+      ],
+      "nvidia": [
+        "cuda"
+      ]
+    },
+    "cuda_arch": "86",
+    "cuda_host_cxx": "g++-13"
+  },
+  "compile": {
+    "backend": "inductor",
+    "mode": "max-autotune-no-cudagraphs",
+    "fullgraph": true,
+    "dynamic": false,
+    "frontend": "torch.func.grad_and_value with in-place parameter updates and returned loss/prediction/gradients",
+    "use_fast_math": false,
+    "cpp_unsafe_math": false,
+    "cpp_contract": "off",
+    "cuda_fast_math": false
+  },
+  "precision": {
+    "dtype": "float32",
+    "matmul": "highest",
+    "allow_tf32": false,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "windows": {
+    "tiny": {
+      "warmup": 16,
+      "iterations": 512
+    },
+    "medium": {
+      "warmup": 8,
+      "iterations": 128
+    },
+    "large": {
+      "warmup": 4,
+      "iterations": 32
+    }
+  },
+  "strata": {
+    "intel": {
+      "device": "cpu",
+      "native": "mkl",
+      "modes": [
+        "native",
+        "eager",
+        "compiled"
+      ],
+      "blocks": 6
+    },
+    "nvidia": {
+      "device": "cuda",
+      "native": "cuda",
+      "modes": [
+        "native",
+        "eager",
+        "compiled",
+        "eager-cuda-graph",
+        "compiled-cuda-graph"
+      ],
+      "blocks": 10
+    }
+  },
+  "limits": {
+    "context_seconds": 7200,
+    "worker_ready_seconds": 600,
+    "request_seconds": 180,
+    "shutdown_seconds": 10
+  },
+  "snapshot": {
+    "timed_step": "forward/backward-overwrite/SGD; no transfer or snapshot",
+    "post_update_forward": true,
+    "gradients": "last pre-update backward",
+    "parameters": "after all warmup and timed updates",
+    "comparison": "full payloads; no sampled elements",
+    "repeat": "exact same-mode reset/re-execution payloads"
+  },
+  "profiles": {
+    "intel": {
+      "dense-projection": 8192,
+      "wave-multichannel": 8192,
+      "spectrum-medium": 8192
+    },
+    "nvidia": {
+      "dense-tiny": 1024,
+      "wave-multichannel": 256,
+      "spectrum-large": 128
+    }
+  },
+  "cases": [
+    {
+      "name": "dense-tiny",
+      "family": "dense",
+      "dims": [
+        3,
+        2,
+        2
+      ],
+      "layout": "contiguous",
+      "regime": "tiny"
+    },
+    {
+      "name": "dense-tail",
+      "family": "dense",
+      "dims": [
+        33,
+        65,
+        17
+      ],
+      "layout": "contiguous",
+      "regime": "medium"
+    },
+    {
+      "name": "dense-projection",
+      "family": "dense",
+      "dims": [
+        512,
+        128,
+        128
+      ],
+      "layout": "contiguous",
+      "regime": "large"
+    },
+    {
+      "name": "dense-large",
+      "family": "dense",
+      "dims": [
+        2048,
+        257,
+        129
+      ],
+      "layout": "contiguous",
+      "regime": "large"
+    },
+    {
+      "name": "wave-tiny",
+      "family": "waveform",
+      "dims": [
+        2,
+        2,
+        17
+      ],
+      "layout": "reversed-permuted",
+      "regime": "tiny"
+    },
+    {
+      "name": "wave-block",
+      "family": "waveform",
+      "dims": [
+        1,
+        2,
+        257
+      ],
+      "layout": "contiguous",
+      "regime": "medium"
+    },
+    {
+      "name": "wave-multichannel",
+      "family": "waveform",
+      "dims": [
+        2,
+        8,
+        4097
+      ],
+      "layout": "reversed-permuted",
+      "regime": "large"
+    },
+    {
+      "name": "wave-long",
+      "family": "waveform",
+      "dims": [
+        1,
+        2,
+        48001
+      ],
+      "layout": "contiguous",
+      "regime": "large"
+    },
+    {
+      "name": "spectrum-tiny",
+      "family": "spectrum",
+      "dims": [
+        2,
+        2,
+        3,
+        5
+      ],
+      "layout": "reversed-permuted",
+      "regime": "tiny"
+    },
+    {
+      "name": "spectrum-block",
+      "family": "spectrum",
+      "dims": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "layout": "contiguous",
+      "regime": "medium"
+    },
+    {
+      "name": "spectrum-medium",
+      "family": "spectrum",
+      "dims": [
+        2,
+        4,
+        257,
+        33
+      ],
+      "layout": "reversed-permuted",
+      "regime": "large"
+    },
+    {
+      "name": "spectrum-large",
+      "family": "spectrum",
+      "dims": [
+        1,
+        2,
+        1025,
+        257
+      ],
+      "layout": "contiguous",
+      "regime": "large"
+    }
+  ],
+  "reporting": {
+    "primary": "warmed complete-step wall microseconds",
+    "secondary": [
+      "CUDA stream event microseconds",
+      "preparation",
+      "first prepared step",
+      "explicit payload/plan resources",
+      "separate profiler diagnostics"
+    ],
+    "aggregate": "per-case ratios to strongest compatible Torch mode; descriptive geometric mean only",
+    "promotion": false,
+    "confirmation_required_for_optimization": true
+  }
+}

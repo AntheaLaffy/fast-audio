@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "name": "cpu-prepared-backward-v1",
+  "training_protocol_sha256": "ba5cd58d8928da60791321ffaea15ed61ff30320a8024fde17e4539de5d2678d",
+  "control": {
+    "producer_commit": "3b6635754637ca81e897e6431ae88695b8c51496",
+    "binary_sha256": "121f8931a976d349e315d6b4f74be7f4330473fba25f43338ab6c4c4b5cbcef5",
+    "build_receipt": "benchmarks/results/2026-10-20-training-intel-characterization-3b66357/native-build/build-receipt.json"
+  },
+  "platform": "intel",
+  "mechanism": "Select CPU pointwise backward operation/operand and Empty/Copy/Tree32/Tree256 kernels at plan construction; select CPU reduction-adjoint scaling/row kernels at construction; retain immutable checked geometry and original math/trees",
+  "primary_cases": [
+    "wave-multichannel",
+    "wave-long",
+    "spectrum-medium",
+    "spectrum-large"
+  ],
+  "guard_cases": "all twelve cases of the immutable training protocol",
+  "primary": "equal-weight geometric mean control/candidate complete-step wall latency across the four primary cases",
+  "minimum_speedup": 1.1,
+  "maximum_per_case_slowdown": 1.05,
+  "blocks_per_context": 6,
+  "block_order": "control first iff (evaluation + catalogue_index + block) is even; otherwise candidate first",
+  "startup_order": "control first iff (evaluation + catalogue_index) is even",
+  "case_order": "rotate catalogue left by evaluation modulo twelve, then reverse for odd evaluations",
+  "windows": "All original training windows, eight validation updates and six balanced paired blocks per case/context, unchanged frozen control worker",
+  "screen_evaluations_max": 0,
+  "confirmation_evaluations": 12,
+  "confirmation_candidate_count": 1,
+  "confirmation": {
+    "experimental_unit": "One fresh worker-pair context; paired blocks are aggregated within each case/context",
+    "case_effect": "Arithmetic mean of six paired log(control_wall_us/candidate_wall_us) per case/context",
+    "primary_effect": "arithmetic mean of the four primary case effects in each context",
+    "interval": "One-sided Student t lower bounds on mean log effects across exactly twelve fresh contexts, df=11",
+    "family_alpha": 0.05,
+    "family_bounds": 13,
+    "per_bound_alpha": "0.05/13; one primary and twelve per-case lower bounds",
+    "pass": "primary lower bound >= log(1.1), every case lower bound >= -log(1.05), and all hard gates pass",
+    "assumptions": "approximately normal independent context log effects on this fixed pinned host; no population-wide or distribution-free confidence claim"
+  },
+  "hard_gates": [
+    "all original independent FP64/eager trajectories, actual-update four-ULP checks and exact reset/repeat gates",
+    "bit-identical full control/candidate validation and warmed-window predictions, losses, gradients, parameters and sources",
+    "identical explicit resource and bound/fixture/seed byte metadata and zero warmed Rust allocations",
+    "unchanged local derivative formulas, ordered contraction trees, empty/NaN/signed-zero and error-before-write contracts",
+    "complete portable/Intel debug/release regressions, targeted signed-layout Miri and CUDA functional regressions",
+    "Fixed CPU UnaryBackward/BinaryBackward/ReduceBackward headers grow by at most one eight-byte function pointer each on the measured x86_64 ABI; record separately because dynamic resource reports explicitly exclude fixed headers",
+    "Supplemental long signed/aliased exceptional-value probe and baseline/candidate fixed-header probes pass before confirmation"
+  ],
+  "limits": {
+    "context_seconds": 420,
+    "campaign_seconds": 2400
+  },
+  "diagnostics": {
+    "artifacts": "Read-only public entry/kernel symbols and prologues; at most one separate 8192-step wave-multichannel perf pair at 99 Hz if it can resolve an unexplained residual",
+    "case": "wave-multichannel",
+    "steps": 8192,
+    "scope": "Diagnostic only; reserve sixty seconds conservatively for bounded premeasurement static commands; no partial confirmation statistic changes the fixed decision"
+  },
+  "stopping": "One source candidate, zero timing screens or measured revisions. Freeze it after complete functional/bit/resource/header gates and before exactly twelve fresh confirmation contexts. Stop only for a hard gate failure, invalid context or budget; never replace a failed context, add samples or change thresholds after inspection. Restore scalar control on unresolved/rejected acceptance.",
+  "scope": "CPU native-vs-native optimization on the twelve procedural cases; no fresh Torch timing, application or NVIDIA latency claim",
+  "candidate_count": 1,
+  "precision_basis": "Predeclare twelve independent contexts for the sole source candidate; no timing screen or selection between measured candidates. Prior tiny-case variability motivates replication at the context level, not reuse or extension of the completed families.",
+  "history_scope": "A new prepared dispatch/strategy intervention; preserve both unpromoted row/isolation families and the original control. Family error control applies only to this one frozen candidate, not the unlimited project search."
+}

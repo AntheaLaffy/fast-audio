@@ -1,0 +1,13 @@
+import { href, pages } from '../data/pages';
+import { words, type Lang } from '../data/i18n';
+import { repository, previewVersion } from '../data/release';
+const milestones = [
+  { title: words('Single-device FP32 training', '单设备 FP32 训练', '単一デバイスの FP32 学習'), stage: words('Verified core','核心已验证','基盤を検証済み'), desc: words('The checked tensor layouts, local gradients, native tape, spectral transforms, AdamW and checkpoint paths form the published single-device training core.', '已验证的张量布局、局部梯度、原生 tape、频谱变换、AdamW 和检查点共同组成单设备训练核心。', '検証済みのレイアウト、局所勾配、テープ、スペクトル変換、AdamW とチェックポイントが単一デバイス学習の基盤です。') },
+  { title: words('Precision and operator breadth', '精度与算子扩展', '精度と演算の拡充'), stage: words('Development','开发中','開発中'), desc: words('Qualify reduced precision, tensor-core paths, typed indices, stochastic operators and audio losses against numerical references and real workloads.', '结合数值参考和实际负载，验证低精度计算、Tensor Core、类型化索引、随机算子和音频损失。', '低精度演算、Tensor Core、型付きインデックス、確率的演算、音声損失を数値参照と実ワークロードで評価します。') },
+  { title: words('Scaling and convergence', '扩展能力与收敛验证', 'スケールと収束の検証'), stage: words('Planned','规划中','計画中'), desc: words('Variable-length batches, CPU parallelism, memory management and longer convergence runs extend the foundation to larger training workloads.', '可变长度批次、CPU 并行、内存管理和长期收敛验证将支持更大的训练负载。', '可変長バッチ、CPU 並列処理、メモリ管理、長期の収束検証を通じて大きな学習ワークロードに対応します。') },
+  { title: words('Audio applications', '音频应用', '音声アプリケーション'), stage: words('Later','后续阶段','今後の対象'), desc: words('Music processing, source separation and synthesis follow the foundation milestones. GTCRN already serves as a fixed speech-enhancement regression workload.', '基础框架达标后，将推进音乐处理、音源分离和合成。GTCRN 已作为固定的语音增强回归负载。', '基盤の整備後に音楽処理、音源分離、合成へ進みます。GTCRN は現在も音声強調の回帰検証に使用しています。') },
+];
+export function RoadmapSection({ lang }: { lang: Lang }) {
+  return <div className="reading"><h2>{words('Release policy', '发布策略', 'リリース方針')[lang]}</h2><p>{words('The first preview is pinned to', '首个预览版本为', '初回のプレビュー版は')[lang]} <code>{previewVersion}</code>. {words('New versions follow reviewed milestones. Stable promotion requires downstream, compatibility and hardware evidence.', '按评审后的里程碑发版。晋级稳定版需要下游验证、兼容性审查和硬件实测记录。', 'レビュー済みの節目でリリースします。安定版への移行には利用側の検証、互換性の確認、実機での記録が必要です。')[lang]}</p><a className="text-link" href={repository + '/blob/main/docs/releasing.md'}>{words('Read the release process (English)', '查看发布制度（英文）', 'リリース手順を読む（英語）')[lang]}</a>
+    <div className="roadmap">{milestones.map(m => <article key={m.title.en}><span className="eyebrow">{m.stage[lang]}</span><h2>{m.title[lang]}</h2><p>{m.desc[lang]}</p></article>)}</div><a className="text-link" href={href(lang,'docs/operators')}>{pages['docs/operators'].title[lang]}</a></div>;
+}

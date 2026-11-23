@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "name": "cpu-backward-traversal-v1",
+  "training_protocol_sha256": "ba5cd58d8928da60791321ffaea15ed61ff30320a8024fde17e4539de5d2678d",
+  "control": {
+    "producer_commit": "3b6635754637ca81e897e6431ae88695b8c51496",
+    "binary_sha256": "121f8931a976d349e315d6b4f74be7f4330473fba25f43338ab6c4c4b5cbcef5",
+    "build_receipt": "benchmarks/results/2026-10-20-training-intel-characterization-3b66357/native-build/build-receipt.json"
+  },
+  "platform": "intel",
+  "mechanism": "Replace per-element mixed-radix address decoding with traversal within already jointly coalesced rows for CPU pointwise Copy VJPs and reduction adjoints",
+  "primary_cases": ["wave-multichannel", "wave-long", "spectrum-medium", "spectrum-large"],
+  "guard_cases": "all twelve cases of the immutable training protocol",
+  "primary": "equal-weight geometric mean control/candidate complete-step wall latency across the four primary cases",
+  "minimum_speedup": 1.1,
+  "maximum_per_case_slowdown": 1.05,
+  "blocks_per_context": 6,
+  "block_order": "control first iff (evaluation + catalogue_index + block) is even; otherwise candidate first",
+  "startup_order": "control first iff (evaluation + catalogue_index) is even",
+  "case_order": "rotate catalogue left by evaluation modulo twelve, then reverse for odd evaluations",
+  "windows": "unchanged original training warmup/iterations, reset/repeat and diagnostic-forward boundaries",
+  "screen_evaluations_max": 2,
+  "confirmation_evaluations": 5,
+  "confirmation_candidate_count": 1,
+  "screen_admission": "all hard gates, primary point speedup at least 1.1 and every case point speedup at least 1/1.05",
+  "confirmation": {
+    "experimental_unit": "one fresh worker-pair context; six paired blocks are aggregated within each case/context",
+    "case_effect": "arithmetic mean of six paired log(control_wall_us/candidate_wall_us)",
+    "primary_effect": "arithmetic mean of the four primary case effects in each context",
+    "interval": "one-sided Student t lower bounds on mean log effects across exactly five fresh contexts, df=4",
+    "family_alpha": 0.05,
+    "family_bounds": 13,
+    "per_bound_alpha": "0.05/13; one primary and twelve per-case lower bounds",
+    "pass": "primary lower bound >= log(1.1), every case lower bound >= -log(1.05), and all hard gates pass",
+    "assumptions": "approximately normal independent context log effects on this fixed pinned host; no population-wide or distribution-free confidence claim"
+  },
+  "hard_gates": [
+    "all original independent FP64/eager trajectories, actual-update four-ULP checks and exact reset/repeat gates",
+    "bit-identical full control/candidate validation and warmed-window predictions, losses, gradients, parameters and sources",
+    "identical explicit resource and bound/fixture/seed byte metadata and zero warmed Rust allocations",
+    "unchanged local derivative formulas, ordered contraction trees, empty/NaN/signed-zero and error-before-write contracts",
+    "complete portable/Intel debug/release regressions, targeted signed-layout Miri and CUDA functional regressions"
+  ],
+  "limits": {"context_seconds": 420, "campaign_seconds": 2100},
+  "diagnostics": {
+    "case": "wave-multichannel",
+    "steps": 8192,
+    "artifacts": "separate control/candidate perf profiles with frame-pointer call graphs and 99 Hz sampling when permitted",
+    "scope": "diagnostic only; never enter primary samples or override end-to-end acceptance"
+  },
+  "stopping": "preserve every failure/sample; select at most one candidate before all five confirmations; no extra confirmation or threshold changes; unresolved/rejected guards retain control",
+  "scope": "CPU native-vs-native optimization on the twelve procedural cases; no fresh Torch timing, application or NVIDIA latency claim"
+}

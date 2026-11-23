@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {"name":"gemm-stream", "op":"matmul", "m":256, "n":256, "k":256},
+    {"name":"gemm-projection", "op":"matmul", "m":1024, "n":2048, "k":512},
+    {"name":"conv-audio", "op":"conv1d", "batch":1, "in_channels":64, "out_channels":128, "input_len":4096, "kernel":3, "stride":1, "padding":1, "dilation":1, "groups":1, "bias":true, "relu":true},
+    {"name":"conv-pointwise", "op":"conv1d", "batch":1, "in_channels":256, "out_channels":512, "input_len":2048, "kernel":1, "stride":1, "padding":0, "dilation":1, "groups":1, "bias":true, "relu":true},
+    {"name":"conv-grouped", "op":"conv1d", "batch":2, "in_channels":32, "out_channels":64, "input_len":1025, "kernel":5, "stride":2, "padding":4, "dilation":2, "groups":4, "bias":false, "relu":false},
+    {"name":"stft-stereo", "op":"stft", "batch":2, "input_len":44100, "fft_size":2048, "hop":512},
+    {"name":"stft-stream", "op":"stft", "batch":1, "input_len":4096, "fft_size":512, "hop":128}
+  ]
+}

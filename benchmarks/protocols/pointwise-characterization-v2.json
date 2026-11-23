@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "name": "pointwise-characterization-v2",
+  "precision": "FP32; TF32 disabled; native default rounding; no fast math",
+  "atol": 0.000002,
+  "rtol": 0.000003,
+  "threads": 1,
+  "affinity": [
+    0
+  ],
+  "fixture": "pcg32-hash-v1; signed 4*x; positive 0.125+abs(x); right 0.5+abs(x); salts 11,29",
+  "output_sentinel_bits": "7fc12345",
+  "backing_tail_elements": 2,
+  "compile": {
+    "backend": "inductor",
+    "mode": "max-autotune-no-cudagraphs",
+    "fullgraph": true,
+    "dynamic": false,
+    "writeback": "functional-copy_",
+    "compile_threads": 1,
+    "cache": "new dedicated context directory; reused across ordered cases"
+  },
+  "strata": {
+    "intel": {
+      "device": "cpu",
+      "backend": "cpu-common-rust",
+      "blocks": 6,
+      "modes": [
+        "native",
+        "eager",
+        "compiled"
+      ],
+      "compiled_features": {
+        "mkl": false,
+        "onednn": false,
+        "cuda": false,
+        "cudnn": false
+      },
+      "windows": {
+        "tiny": {
+          "warmup": 2000,
+          "iterations": 200000
+        },
+        "bulk": {
+          "warmup": 5,
+          "iterations": 50
+        },
+        "channel": {
+          "warmup": 20,
+          "iterations": 200
+        },
+        "outer": {
+          "warmup": 20,
+          "iterations": 500
+        },
+        "transpose-read": {
+          "warmup": 20,
+          "iterations": 200
+        },
+        "transpose-write": {
+          "warmup": 20,
+          "iterations": 200
+        },
+        "gapped": {
+          "warmup": 20,
+          "iterations": 2000
+        },
+        "overlap": {
+          "warmup": 20,
+          "iterations": 500
+        },
+        "scalar-left": {
+          "warmup": 20,
+          "iterations": 5000
+        },
+        "scalar-right": {
+          "warmup": 20,
+          "iterations": 5000
+        }
+      }
+    },
+    "nvidia": {
+      "device": "cuda",
+      "backend": "cuda-pointwise",
+      "blocks": 10,
+      "modes": [
+        "native",
+        "eager",
+        "compiled",
+        "eager-cuda-graph",
+        "compiled-cuda-graph"
+      ],
+      "compiled_features": {
+        "mkl": false,
+        "onednn": false,
+        "cuda": true,
+        "cudnn": false
+      },
+      "windows": {
+        "tiny": {
+          "warmup": 100,
+          "iterations": 5000
+        },
+        "bulk": {
+          "warmup": 20,
+          "iterations": 500
+        },
+        "channel": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "outer": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "transpose-read": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "transpose-write": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "gapped": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "overlap": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "scalar-left": {
+          "warmup": 50,
+          "iterations": 2000
+        },
+        "scalar-right": {
+          "warmup": 50,
+          "iterations": 2000
+        }
+      }
+    }
+  },
+  "build": {
+    "profile": "release",
+    "locked": true,
+    "rustflags": "-C target-cpu=native",
+    "cuda_arch": "86",
+    "cuda_host_cxx": "g++-13"
+  },
+  "budget": {
+    "contexts_per_host": 1,
+    "optimization_candidates": 0,
+    "confirmation_executions": 0,
+    "promotion": false,
+    "context_timeout_seconds": 7200,
+    "worker_prepare_timeout_seconds": 600,
+    "worker_command_timeout_seconds": 120,
+    "profiles_per_case": 1
+  },
+  "profiles": {
+    "intel": {
+      "bulk-add": 2000,
+      "bulk-softplus": 200,
+      "transpose-read-mul": 2000,
+      "channel-mul": 2000,
+      "tiny-sigmoid": 1000000
+    },
+    "nvidia": {
+      "bulk-add": 1000,
+      "bulk-softplus": 1000,
+      "transpose-read-mul": 1000,
+      "channel-mul": 1000,
+      "tiny-sigmoid": 1000
+    }
+  },
+  "cases": [
+    {"name":"tiny-neg","operation":"neg","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-abs","operation":"abs","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-square","operation":"square","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-reciprocal","operation":"reciprocal","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-sqrt","operation":"sqrt","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-exp","operation":"exp","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-log","operation":"log","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-relu","operation":"relu","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-sigmoid","operation":"sigmoid","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-tanh","operation":"tanh","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-silu","operation":"silu","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-softplus","operation":"softplus","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-add","operation":"add","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0},{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-sub","operation":"sub","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0},{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-mul","operation":"mul","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0},{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"tiny-div","operation":"div","regime":"tiny","inputs":[{"dims":[2,257],"strides":[257,1],"offset":0},{"dims":[2,257],"strides":[257,1],"offset":0}],"output":{"dims":[2,257],"strides":[257,1],"offset":0}},
+    {"name":"bulk-neg","operation":"neg","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-abs","operation":"abs","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-square","operation":"square","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-reciprocal","operation":"reciprocal","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-sqrt","operation":"sqrt","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-exp","operation":"exp","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-log","operation":"log","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-relu","operation":"relu","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-sigmoid","operation":"sigmoid","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-tanh","operation":"tanh","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-silu","operation":"silu","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-softplus","operation":"softplus","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-add","operation":"add","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0},{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-sub","operation":"sub","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0},{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-mul","operation":"mul","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0},{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"bulk-div","operation":"div","regime":"bulk","inputs":[{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0},{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}],"output":{"dims":[8,64,4096],"strides":[262144,4096,1],"offset":0}},
+    {"name":"channel-add","operation":"add","regime":"channel","inputs":[{"dims":[4,64,1025],"strides":[65600,1025,1],"offset":0},{"dims":[64,1],"strides":[1,1],"offset":0}],"output":{"dims":[4,64,1025],"strides":[65600,1025,1],"offset":0}},
+    {"name":"channel-mul","operation":"mul","regime":"channel","inputs":[{"dims":[4,64,1025],"strides":[65600,1025,1],"offset":0},{"dims":[64,1],"strides":[1,1],"offset":0}],"output":{"dims":[4,64,1025],"strides":[65600,1025,1],"offset":0}},
+    {"name":"outer-add","operation":"add","regime":"outer","inputs":[{"dims":[257,1],"strides":[1,1],"offset":0},{"dims":[1,257],"strides":[257,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"outer-mul","operation":"mul","regime":"outer","inputs":[{"dims":[257,1],"strides":[1,1],"offset":0},{"dims":[1,257],"strides":[257,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"transpose-read-add","operation":"add","regime":"transpose-read","inputs":[{"dims":[257,1025],"strides":[1,257],"offset":0},{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1025,1],"offset":0}},
+    {"name":"transpose-read-mul","operation":"mul","regime":"transpose-read","inputs":[{"dims":[257,1025],"strides":[1,257],"offset":0},{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1025,1],"offset":0}},
+    {"name":"transpose-write-add","operation":"add","regime":"transpose-write","inputs":[{"dims":[257,1025],"strides":[1025,1],"offset":0},{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1,257],"offset":0}},
+    {"name":"transpose-write-mul","operation":"mul","regime":"transpose-write","inputs":[{"dims":[257,1025],"strides":[1025,1],"offset":0},{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1,257],"offset":0}},
+    {"name":"gapped-add","operation":"add","regime":"gapped","inputs":[{"dims":[17,1025],"strides":[2056,2],"offset":3},{"dims":[17,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[17,1025],"strides":[2058,2],"offset":5}},
+    {"name":"gapped-mul","operation":"mul","regime":"gapped","inputs":[{"dims":[17,1025],"strides":[2056,2],"offset":3},{"dims":[17,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[17,1025],"strides":[2058,2],"offset":5}},
+    {"name":"overlap-add","operation":"add","regime":"overlap","inputs":[{"dims":[257,257],"strides":[1,1],"offset":0},{"dims":[257,257],"strides":[257,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"overlap-mul","operation":"mul","regime":"overlap","inputs":[{"dims":[257,257],"strides":[1,1],"offset":0},{"dims":[257,257],"strides":[257,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"transpose-read-sigmoid","operation":"sigmoid","regime":"transpose-read","inputs":[{"dims":[257,1025],"strides":[1,257],"offset":0}],"output":{"dims":[257,1025],"strides":[1025,1],"offset":0}},
+    {"name":"transpose-read-softplus","operation":"softplus","regime":"transpose-read","inputs":[{"dims":[257,1025],"strides":[1,257],"offset":0}],"output":{"dims":[257,1025],"strides":[1025,1],"offset":0}},
+    {"name":"transpose-write-sigmoid","operation":"sigmoid","regime":"transpose-write","inputs":[{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1,257],"offset":0}},
+    {"name":"transpose-write-softplus","operation":"softplus","regime":"transpose-write","inputs":[{"dims":[257,1025],"strides":[1025,1],"offset":0}],"output":{"dims":[257,1025],"strides":[1,257],"offset":0}},
+    {"name":"gapped-sigmoid","operation":"sigmoid","regime":"gapped","inputs":[{"dims":[17,1025],"strides":[2056,2],"offset":3}],"output":{"dims":[17,1025],"strides":[2058,2],"offset":5}},
+    {"name":"gapped-softplus","operation":"softplus","regime":"gapped","inputs":[{"dims":[17,1025],"strides":[2056,2],"offset":3}],"output":{"dims":[17,1025],"strides":[2058,2],"offset":5}},
+    {"name":"overlap-sigmoid","operation":"sigmoid","regime":"overlap","inputs":[{"dims":[257,257],"strides":[1,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"overlap-softplus","operation":"softplus","regime":"overlap","inputs":[{"dims":[257,257],"strides":[1,1],"offset":0}],"output":{"dims":[257,257],"strides":[257,1],"offset":0}},
+    {"name":"scalar-left-add","operation":"add","regime":"scalar-left","inputs":[{"dims":[],"strides":[],"offset":1},{"dims":[2,4097],"strides":[4097,1],"offset":0}],"output":{"dims":[2,4097],"strides":[4097,1],"offset":0}},
+    {"name":"scalar-left-mul","operation":"mul","regime":"scalar-left","inputs":[{"dims":[],"strides":[],"offset":1},{"dims":[2,4097],"strides":[4097,1],"offset":0}],"output":{"dims":[2,4097],"strides":[4097,1],"offset":0}},
+    {"name":"scalar-right-add","operation":"add","regime":"scalar-right","inputs":[{"dims":[2,4097],"strides":[4097,1],"offset":0},{"dims":[],"strides":[],"offset":1}],"output":{"dims":[2,4097],"strides":[4097,1],"offset":0}},
+    {"name":"scalar-right-mul","operation":"mul","regime":"scalar-right","inputs":[{"dims":[2,4097],"strides":[4097,1],"offset":0},{"dims":[],"strides":[],"offset":1}],"output":{"dims":[2,4097],"strides":[4097,1],"offset":0}}
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "name": "cpu-backward-isolation-v2",
+  "training_protocol_sha256": "ba5cd58d8928da60791321ffaea15ed61ff30320a8024fde17e4539de5d2678d",
+  "control": {
+    "producer_commit": "3b6635754637ca81e897e6431ae88695b8c51496",
+    "binary_sha256": "121f8931a976d349e315d6b4f74be7f4330473fba25f43338ab6c4c4b5cbcef5",
+    "build_receipt": "benchmarks/results/2026-10-20-training-intel-characterization-3b66357/native-build/build-receipt.json"
+  },
+  "platform": "intel",
+  "mechanism": "Place the coalesced-row CPU pointwise Copy VJP and reduction-adjoint loops in non-inlined execution bodies; retain the original scalar bodies below sixteen logical FP32 elements and ordered contraction semantics",
+  "primary_cases": [
+    "wave-multichannel",
+    "wave-long",
+    "spectrum-medium",
+    "spectrum-large"
+  ],
+  "guard_cases": "all twelve cases of the immutable training protocol",
+  "primary": "equal-weight geometric mean control/candidate complete-step wall latency across the four primary cases",
+  "minimum_speedup": 1.1,
+  "maximum_per_case_slowdown": 1.05,
+  "blocks_per_context": 6,
+  "block_order": "control first iff (evaluation + catalogue_index + block) is even; otherwise candidate first",
+  "startup_order": "control first iff (evaluation + catalogue_index) is even",
+  "case_order": "rotate catalogue left by evaluation modulo twelve, then reverse for odd evaluations",
+  "windows": "Unchanged original training warmup/iterations, reset/repeat and diagnostic-forward boundaries; extra dense-tiny paired blocks do not change the worker window",
+  "screen_evaluations_max": 1,
+  "confirmation_evaluations": 12,
+  "confirmation_candidate_count": 1,
+  "screen_admission": "all hard gates, primary point speedup at least 1.1 and every case point speedup at least 1/1.05",
+  "confirmation": {
+    "experimental_unit": "One fresh worker-pair context; paired blocks are aggregated within each case/context",
+    "case_effect": "Arithmetic mean of six paired log(control_wall_us/candidate_wall_us) per case/context",
+    "primary_effect": "arithmetic mean of the four primary case effects in each context",
+    "interval": "One-sided Student t lower bounds on mean log effects across exactly twelve fresh contexts, df=11",
+    "family_alpha": 0.05,
+    "family_bounds": 13,
+    "per_bound_alpha": "0.05/13; one primary and twelve per-case lower bounds",
+    "pass": "primary lower bound >= log(1.1), every case lower bound >= -log(1.05), and all hard gates pass",
+    "assumptions": "approximately normal independent context log effects on this fixed pinned host; no population-wide or distribution-free confidence claim"
+  },
+  "hard_gates": [
+    "all original independent FP64/eager trajectories, actual-update four-ULP checks and exact reset/repeat gates",
+    "bit-identical full control/candidate validation and warmed-window predictions, losses, gradients, parameters and sources",
+    "identical explicit resource and bound/fixture/seed byte metadata and zero warmed Rust allocations",
+    "unchanged local derivative formulas, ordered contraction trees, empty/NaN/signed-zero and error-before-write contracts",
+    "complete portable/Intel debug/release regressions, targeted signed-layout Miri and CUDA functional regressions"
+  ],
+  "limits": {
+    "context_seconds": 420,
+    "campaign_seconds": 2400
+  },
+  "diagnostics": {
+    "artifacts": "Read-only symbol sizes and entry prologues for original control, archived traversal candidate and isolated candidate; at most one separate waveform perf pair at 99 Hz if it can resolve an unexplained result",
+    "case": "wave-multichannel",
+    "steps": 8192,
+    "scope": "Diagnostic only; no timing sample, causal guarantee or independent acceptance veto"
+  },
+  "stopping": "One new source candidate and one full screen; no code revision, screen retry or extension of the completed traversal family. Select before exactly twelve fresh confirmations; preserve all samples/failures and retain control for any unresolved or rejected guard.",
+  "scope": "CPU native-vs-native optimization on the twelve procedural cases; no fresh Torch timing, application or NVIDIA latency claim",
+  "candidate_count": 1,
+  "precision_basis": "The completed traversal family had five independent context effects. Fix twelve fresh contexts with all original six balanced worker blocks; do not alter the frozen control worker or count resident blocks as independent contexts.",
+  "history_scope": "A new code-isolation intervention informed by preserved traversal evidence, not continuation of its completed confirmations. Family error control applies only to this one frozen candidate, not the unlimited project search.",
+  "supersedes": {
+    "protocol": "benchmarks/protocols/cpu-backward-isolation-v1.json",
+    "sha256": "c7e3cc18ea7f9d85c46ebb15f6a5ae79e98d32dddcb7736726d0be7d27bec19c",
+    "status": "unexecuted declaration; frozen control rejects more than six measured blocks per worker",
+    "timing_evidence_inspected": false
+  }
+}

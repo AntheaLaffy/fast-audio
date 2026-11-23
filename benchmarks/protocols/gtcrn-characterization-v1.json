@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "name": "gtcrn-characterization-v1",
+  "scope": "Fixed-fixture whole-model characterization; no optimization or framework promotion",
+  "model_revision": "502ebfab64da7c4a9af78dcb9c6ceef1ebb01c73",
+  "precision": "FP32; TF32 disabled",
+  "atol": 0.0002,
+  "rtol": 0.0002,
+  "threads": 1,
+  "affinity": [0],
+  "blocks": 7,
+  "warmup": 20,
+  "samples_per_worker": 1,
+  "worker_timeout_seconds": 600,
+  "run_order": "native then torch in even blocks; torch then native in odd blocks",
+  "case_order": "Rotate the listed four cases by block index",
+  "primary": "Equally weighted four-case geometric mean of paired torch/native completed pipeline wall latency ratios",
+  "uncertainty": "Seeded paired-block bootstrap, exploratory only; a single execution cannot establish promotion",
+  "strata": {
+    "intel": {
+      "backend": "mkl",
+      "device": "cpu",
+      "compiled_features": {"mkl": true, "onednn": true, "cuda": false, "cudnn": false},
+      "torch_modes": ["eager"],
+      "iterations": {"b1-l4096": 50, "b1-l16000": 20, "b1-l64000": 5, "b2-l16000": 10}
+    },
+    "nvidia": {
+      "backend": "cudnn",
+      "device": "cuda",
+      "compiled_features": {"mkl": false, "onednn": false, "cuda": true, "cudnn": true},
+      "torch_modes": ["eager", "cuda-graph", "cuda-graph-prepared-inverse"],
+      "iterations": {"b1-l4096": 100, "b1-l16000": 100, "b1-l64000": 100, "b2-l16000": 100}
+    }
+  },
+  "cases": [
+    {"name": "b1-l4096", "batch": 1, "input_len": 4096},
+    {"name": "b1-l16000", "batch": 1, "input_len": 16000},
+    {"name": "b1-l64000", "batch": 1, "input_len": 64000},
+    {"name": "b2-l16000", "batch": 2, "input_len": 16000}
+  ],
+  "memory": {
+    "host": "GNU time maximum RSS in KiB for the complete fresh worker command, including setup and output I/O",
+    "cuda": "Separate fresh worker replay, sampled NVML compute-process-group memory; sampled high-water lower bound, not exact allocator peak",
+    "cuda_replay_iterations": 200,
+    "requested_poll_seconds": 0.02,
+    "timing_from_memory_replay": "Excluded from latency summaries"
+  },
+  "profiling": {
+    "case": "b1-l64000",
+    "warmup": 20,
+    "iterations": 100,
+    "control_runs_per_host": 1,
+    "instrumented_runs_per_host": 1,
+    "cpu": "perf record, cycles:u, 199 Hz, DWARF call stacks; own process only",
+    "cuda": "nsys CUDA trace, no CPU sampling or context-switch tracing",
+    "scope": "Separate diagnostics and an uninstrumented same-count control; neither enters latency summaries"
+  },
+  "budget": {
+    "compatibility_probes_per_mode": 1,
+    "characterization_executions_per_host_mode": 1,
+    "optimization_candidates": 0,
+    "promotion": false
+  },
+  "future_promotion": {
+    "minimum_latency_gain": 0.05,
+    "maximum_case_regression": 0.05,
+    "requirements": "Fresh declared same-context candidate/control confirmation, licensed quality evaluation and complete memory/transfer accounting; retain existing operator champions"
+  }
+}

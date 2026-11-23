@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "scope": "Strict FP32 prepared operator suite on the two recorded hosts; not a complete-model release",
+  "intel_cpu": {
+    "backend": "mkl",
+    "features": [
+      "mkl"
+    ],
+    "status": "retain_original_anchor",
+    "artifact": {
+      "report": "results/2026-10-16-cpu/comparison.json",
+      "source_archive": "results/2026-10-16-cpu/source.tar.gz",
+      "source_archive_sha256": "93c35c97445daf9232a366c904991f6fa153c1bee39dad6705332738bcb6cf2b",
+      "binary_sha256": "d9e06426b5a8484f382344402ff2e0dec29660eb468eaa255ce0d854fdde4018"
+    },
+    "candidate_backend": "intel",
+    "candidate_assessment": "results/2026-10-16-intel-assessment.json",
+    "followup_assessment": "results/2026-10-16-intel-long-v1-assessment.json",
+    "followup_protocol": "protocols/intel-long-window-v1.json",
+    "reason": "The original campaign leaves short STFT unresolved; the predeclared long-window campaign resolves STFT but leaves projection GEMM unresolved. Retain the original MKL control."
+  },
+  "nvidia_gpu": {
+    "backend": "nvidia",
+    "features": [
+      "cudnn"
+    ],
+    "status": "accepted_operator_candidate",
+    "artifact": {
+      "report": "results/2026-10-16-nvidia-confirm-1/comparison.json",
+      "source_archive": "results/2026-10-16-nvidia-confirm-1/source.tar.gz",
+      "source_archive_sha256": "d32c06c7211f729855d3e7255ad644f4aee6752cfcd276ff24619648fc6b636c",
+      "binary_sha256": "cc0bb2749afd5dca7c39405431824acea5cd62c5d51fbd1457128b0826f36dfb"
+    },
+    "assessment": "results/2026-10-16-nvidia-assessment.json",
+    "fixed_anchor_report": "results/2026-10-16-cuda/comparison.json"
+  }
+}

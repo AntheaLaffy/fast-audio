@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/Xiaobin-Rong/gtcrn",
+  "revision": "502ebfab64da7c4a9af78dcb9c6ceef1ebb01c73",
+  "license": "MIT",
+  "files": {
+    "gtcrn.py": {
+      "upstream_path": "gtcrn.py",
+      "sha256": "20bf0610702506fa45cd543454b84bbeb862d73c7c20a3f8d820fdc04da6099b"
+    },
+    "LICENSE": {
+      "upstream_path": "LICENSE",
+      "sha256": "c467165e5860b4a7494ef4a6e2788e4115d95b5b8989bb5f86287089adddf794"
+    },
+    "upstream_infer.py": {
+      "upstream_path": "infer.py",
+      "sha256": "1061bb6a9a6f1a27423f7603871e683aaf0cd3ffd40a75efa9f9ba0965330d7b"
+    }
+  },
+  "checkpoint": {
+    "path": "checkpoints/model_trained_on_dns3.tar",
+    "sha256": "a630d992cf792daf4ce2bb5bcf9c4d389f740a8f09c6e0971184697fe6371b79",
+    "bytes": 579819
+  },
+  "sample_rate": 16000,
+  "fft_size": 512,
+  "hop": 256,
+  "window": "sqrt(periodic Hann), matching upstream float32 torch.hann_window",
+  "input_fixture": "Project-generated deterministic tone/noise; no claim of speech-enhancement quality"
+}

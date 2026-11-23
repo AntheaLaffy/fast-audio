@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "cudnn-repeatability-v1",
+  "purpose": "Correctness-only validation of explicit cuDNN convolution engine policy",
+  "backend": "cudnn",
+  "cases": ["b1-l4096", "b1-l16000", "b1-l64000", "b2-l16000"],
+  "convolution_policies": ["allow_nondeterministic", "require_deterministic"],
+  "warmups": [0, 20],
+  "fresh_executions_per_context": 3,
+  "samples": 1,
+  "iterations": 1,
+  "traces": true,
+  "pipeline_only": true,
+  "reference_gate": {"atol": 0.0002, "rtol": 0.0002, "all_outputs_and_traces": true},
+  "required_exact_repeatability": ["require_deterministic"],
+  "plan_metadata": "Record each selected cuDNN convolution engine, workspace, fusion and deterministic numerical note; reject nondeterministic engines under require_deterministic",
+  "budget": {"max_native_commands": 12, "stop_on_worker_failure": true, "replacement_runs": 0},
+  "timing_policy": "CLI timer fields are retained as emitted but excluded from performance analysis",
+  "performance_acceptance": false,
+  "champion_promotion": false
+}

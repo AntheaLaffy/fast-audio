@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.scope.outputs.rust }}
+      web: ${{ steps.scope.outputs.web }}
+      package: ${{ steps.scope.outputs.package }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: scope
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -z "$BASE" || "$BASE" =~ ^0+$ ]]; then
+            BASE=$(git hash-object -t tree /dev/null)
+          fi
+          files=$(git diff --name-only --no-renames "$BASE" "$GITHUB_SHA")
+          select_check() {
+            if grep -Eq "^($2|\.github/workflows/ci\.yml$)" <<< "$files"; then
+              echo "$1=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$1=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+          select_check rust 'src/|native/|tests/.*\.rs$|examples/|build\.rs$|Cargo\.(toml|lock)$|benchmarks/(workloads\.json|protocols/)'
+          select_check web 'website/'
+          select_check package 'Cargo\.(toml|lock)$|build\.rs$|LICENSE$|CHANGELOG\.md$|tools/check_release\.py$'
+
+  portable:
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --all -- --check
+      - run: cargo test --locked
+      - run: |
+          minimum=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml","rb"))["package"]["rust-version"])')
+          rustup toolchain install "$minimum" --profile minimal
+          cargo +"$minimum" check --locked --all-targets
+
+  website:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  package:
+    needs: changes
+    if: needs.changes.outputs.package == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo package --locked
+
+  compatibility:
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.package == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: release
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python3 tools/check_release.py --base "$BASE"
+      - if: steps.release.outputs.baseline != ''
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          baseline-rev: ${{ steps.release.outputs.baseline }}
+          feature-group: default-features
+
+  gate:
+    name: CI gate
+    if: always()
+    needs: [changes, portable, website, package, compatibility]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<< "$RESULTS"

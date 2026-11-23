@@ -1,0 +1,53 @@
+# Preserve byte-identical upstream snapshots and their checksum contracts.
+models/gtcrn/*.py -text -whitespace
+# Preserve checksum-verified profiler output, including tool-emitted whitespace.
+benchmarks/results/2026-10-17-gtcrn-profile-intel/instrumented/perf-report.txt -text -whitespace
+benchmarks/results/2026-10-17-gtcrn-profile-nvidia/instrumented/stats-from-sqlite.csv -text -whitespace
+# Keep signed protocol copies and worker exceptions byte-identical, including EOF blanks.
+benchmarks/results/**/protocol.json -text whitespace=-blank-at-eof
+benchmarks/results/**/workers/**/stderr.log -text whitespace=-blank-at-eof
+benchmarks/protocols/pointwise-characterization-v1.json -text whitespace=-blank-at-eof
+benchmarks/protocols/pointwise-characterization-v2.json -text
+benchmarks/protocols/training-characterization-v1.json -text
+benchmarks/protocols/cpu-backward-traversal-v1.json -text
+benchmarks/protocols/cpu-backward-isolation-v1.json -text
+benchmarks/protocols/cpu-backward-isolation-v2.json -text
+benchmarks/protocols/cpu-prepared-backward-v1.json -text
+benchmarks/results/2026-10-19-pointwise-copyout-gpu-probe.log -text whitespace=-blank-at-eof
+# Preserve sealed plotting/CSV and profiler bytes rather than rewriting emitted whitespace.
+benchmarks/results/2026-10-19-pointwise-v2-all-cases.csv -text whitespace=cr-at-eol
+benchmarks/results/2026-10-19-pointwise-v2-all-cases.svg -text -whitespace
+benchmarks/results/2026-10-19-pointwise-v2-intel-characterization/profile-permission/stderr.log -text -whitespace
+benchmarks/results/2026-10-19-pointwise-v2-intel-characterization/profiles/**/summary/stdout.log -text -whitespace
+benchmarks/results/2026-10-19-pointwise-v2-nvidia-profile-recovery/**/summary/stdout.log -text -whitespace
+# Keep the verified interpreter transcript's original EOF bytes.
+benchmarks/results/2026-10-19-reduction-portable-validation/miri.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-19-pointwise-backward-portable-validation/miri.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-19-pointwise-backward-layout-portable-validation/miri.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-19-matmul-portable-validation/miri.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-19-matmul-preflight-nvidia.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-autograd-portable-validation/miri.log -text whitespace=-blank-at-eof
+# Keep sealed complete-training plots and profiler diagnostics byte-identical.
+benchmarks/results/2026-10-20-training-all-cases.svg -text -whitespace
+benchmarks/results/2026-10-20-training-intel-characterization-3b66357/profile-permission/stderr.log -text -whitespace
+benchmarks/results/2026-10-20-training-intel-characterization-3b66357/profiles/**/summary/stdout.log -text -whitespace
+benchmarks/results/2026-10-20-training-intel-characterization-3b66357/profiles/wave-multichannel/summary/stderr.log -text -whitespace
+benchmarks/results/2026-10-20-training-nvidia-profile-recovery*-3b66357/**/summary/stdout.log -text -whitespace
+# Preserve the completed CPU traversal experiment's sealed plots and tool transcripts.
+benchmarks/results/2026-10-20-cpu-backward-all-cases.svg -text -whitespace
+benchmarks/results/2026-10-20-cpu-backward-candidate2-profiles/**/summary/stdout.log -text -whitespace
+benchmarks/results/2026-10-20-cpu-backward-candidate2-profiles/permission/stderr.log -text -whitespace
+benchmarks/results/2026-10-20-cpu-backward-candidate1-targeted.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-backward-default-restoration-tests.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-backward-intel-candidate*-verification/07-miri-pointwise/stdout.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-backward-intel-candidate*-verification/08-miri-reduce/stdout.log -text whitespace=-blank-at-eof
+# Preserve the isolation trial's original restored-source and interpreter EOF bytes.
+benchmarks/results/2026-10-20-cpu-isolation-default-restoration-tests.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-isolation-intel-verification/07-miri-pointwise/stdout.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-isolation-intel-verification/08-miri-reduce/stdout.log -text whitespace=-blank-at-eof
+# Preserve sealed prepared-dispatch plots and original compiler/interpreter transcripts.
+benchmarks/results/2026-10-20-cpu-prepared-all-cases.svg -text -whitespace
+benchmarks/results/2026-10-20-cpu-prepared-abi-*/compiler-comment.txt -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-prepared-initial-targeted.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-prepared-intel-verification/07-miri-pointwise/stdout.log -text whitespace=-blank-at-eof
+benchmarks/results/2026-10-20-cpu-prepared-intel-verification/08-miri-reduce/stdout.log -text whitespace=-blank-at-eof

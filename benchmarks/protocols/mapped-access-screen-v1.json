@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "name": "mapped-access-screen-v1",
+  "scope": "One fixed-fixture mechanism screen of prepared layout/broadcast addressing; no framework or operator-champion promotion",
+  "candidate": "One implementation: coalesced CPU mapped rows and bounded CUDA reciprocal indexing for graph kinds 0/3; other tensor math unchanged",
+  "model_revision": "502ebfab64da7c4a9af78dcb9c6ceef1ebb01c73",
+  "precision": "FP32; TF32 disabled",
+  "atol": 0.0002,
+  "rtol": 0.0002,
+  "paired_output_gate": "Bit-identical spectrum, enhanced spectrum and waveform to the frozen native control",
+  "planned_storage_gate": "Candidate graph_workspace_bytes and parameter_bytes equal control for every case",
+  "threads": 1,
+  "affinity": [0],
+  "blocks": 7,
+  "warmup": 20,
+  "samples_per_worker": 1,
+  "worker_timeout_seconds": 600,
+  "run_order": "control then candidate in even blocks; candidate then control in odd blocks",
+  "case_order": "Rotate the listed four cases by block index",
+  "primary": "Equally weighted four-case geometric mean of paired control/candidate complete warmed waveform pipeline wall latency ratios",
+  "uncertainty": "Seeded paired-block bootstrap, 5000 resamples, seed 1729; exploratory, not independent confirmation",
+  "strata": {
+    "intel": {
+      "backend": "mkl",
+      "device": "cpu",
+      "compiled_features": {"mkl": true, "onednn": true, "cuda": false, "cudnn": false},
+      "control_binary_sha256": "8acf9ce2bb09627845b15e1450d3c5dba93354996f9f857c273351cd19ab9686",
+      "control_report": "benchmarks/results/2026-10-17-gtcrn-characterization-intel-eager/comparison.json",
+      "iterations": {"b1-l4096": 200, "b1-l16000": 100, "b1-l64000": 50, "b2-l16000": 100}
+    },
+    "nvidia": {
+      "backend": "cudnn",
+      "device": "cuda",
+      "compiled_features": {"mkl": false, "onednn": false, "cuda": true, "cudnn": true},
+      "control_binary_sha256": "169defd6b7938a9cc35fb0b4c57bd42ee2dd26e7f2f7ff65bb6391f4e44baa24",
+      "control_report": "benchmarks/results/2026-10-17-gtcrn-characterization-nvidia-eager/comparison.json",
+      "iterations": {"b1-l4096": 100, "b1-l16000": 100, "b1-l64000": 100, "b2-l16000": 100}
+    }
+  },
+  "cases": [
+    {"name": "b1-l4096", "batch": 1, "input_len": 4096},
+    {"name": "b1-l16000", "batch": 1, "input_len": 16000},
+    {"name": "b1-l64000", "batch": 1, "input_len": 64000},
+    {"name": "b2-l16000", "batch": 2, "input_len": 16000}
+  ],
+  "memory": {
+    "host": "GNU time maximum command RSS in KiB including preparation/output I/O",
+    "cuda_replay_iterations": 200,
+    "requested_poll_seconds": 0.02,
+    "scope": "One separate fresh replay per case/implementation; NVML process-group high-water lower bound; timings excluded from screen summary"
+  },
+  "budget": {
+    "candidate_implementations": 1,
+    "screen_executions_per_host": 1,
+    "confirmation_executions": 0,
+    "promotion": false
+  },
+  "followup": {
+    "min_latency_reduction": 0.05,
+    "max_case_regression": 0.05,
+    "requirements": "Separate declared fresh confirmation, quality/resource requirements and music/synthesis workload coverage before broader acceptance; existing unresolved operator guards remain active"
+  }
+}

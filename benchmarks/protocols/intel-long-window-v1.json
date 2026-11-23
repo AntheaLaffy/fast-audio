@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "name": "intel-long-window-v1",
+  "device": "cpu",
+  "executions": 3,
+  "blocks": 7,
+  "threads": 1,
+  "cpu_affinity": [
+    0
+  ],
+  "candidate": {
+    "backend": "intel",
+    "binary_sha256": "81ea7e442e7ab0c79aa72efece75445e5233d323bd4a65f53139b506e60fc45b"
+  },
+  "anchor": {
+    "backend": "mkl",
+    "binary_sha256": "d9e06426b5a8484f382344402ff2e0dec29660eb468eaa255ce0d854fdde4018"
+  },
+  "acceptance": {
+    "min_latency_reduction": 0.05,
+    "max_latency_regression": 0.05
+  },
+  "cases": {
+    "gemm-stream": {
+      "iterations": 1000,
+      "warmup": 500
+    },
+    "gemm-projection": {
+      "iterations": 50,
+      "warmup": 20
+    },
+    "conv-audio": {
+      "iterations": 100,
+      "warmup": 50
+    },
+    "conv-pointwise": {
+      "iterations": 50,
+      "warmup": 20
+    },
+    "conv-grouped": {
+      "iterations": 2000,
+      "warmup": 1000
+    },
+    "stft-stereo": {
+      "iterations": 1000,
+      "warmup": 500
+    },
+    "stft-stream": {
+      "iterations": 20000,
+      "warmup": 10000
+    }
+  }
+}

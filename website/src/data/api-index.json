@@ -1,0 +1,1584 @@
+[
+ {
+  "name": "GradientStatus",
+  "module": "autograd",
+  "decl": "pub enum GradientStatus { Unused, Uncomputed, Valid, Invalid, }",
+  "methods": []
+ },
+ {
+  "name": "Binding",
+  "module": "autograd",
+  "decl": "pub struct Binding<T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn new(value: Value, owner: Shared<T>) -> Self"
+  ]
+ },
+ {
+  "name": "Builder",
+  "module": "autograd",
+  "decl": "pub struct Builder { /* private fields */ }",
+  "methods": [
+   "pub fn new() -> Result<Self>",
+   "pub fn layout(&self, value: Value) -> Result<&Layout>",
+   "pub fn shape(&self, value: Value) -> Result<&Shape>",
+   "pub fn leaf( &mut self, shape: impl AsRef<[usize]>, requires_grad: bool, ) -> Result<Value>",
+   "pub fn unary(&mut self, operation: UnaryOp, input: Value) -> Result<Value>",
+   "pub fn binary( &mut self, operation: BinaryOp, left: Value, right: Value, ) -> Result<Value>",
+   "pub fn reduce( &mut self, operation: ReduceOp, input: Value, axes: &[usize], keep_dims: bool, ) -> Result<Value>",
+   "pub fn matmul(&mut self, left: Value, right: Value) -> Result<Value>",
+   "pub fn conv1d( &mut self, input: Value, weight: Value, stride: usize, padding: usize, dilation: usize, groups: usize, ) -> Result<Value>",
+   "pub fn conv2d( &mut self, input: Value, weight: Value, stride: [usize; 2], padding: [usize; 2], dilation: [usize; 2], groups: usize, ) -> Result<Value>",
+   "pub fn stft( &mut self, input: Value, fft_size: usize, hop: usize, window: Option<&Tensor>, ) -> Result<Value>",
+   "pub fn centered_stft( &mut self, input: Value, fft_size: usize, hop: usize, window: Option<&Tensor>, ) -> Result<Value>",
+   "pub fn istft( &mut self, spectrum: Value, output_len: usize, fft_size: usize, hop: usize, window: Option<&Tensor>, ) -> Result<Value>",
+   "pub fn layer_norm( &mut self, input: Value, normalized_dims: usize, eps: f32, ) -> Result<Value>",
+   "pub fn rms_norm( &mut self, input: Value, normalized_dims: usize, eps: f32, ) -> Result<Value>",
+   "pub fn group_norm( &mut self, input: Value, num_groups: usize, eps: f32, ) -> Result<Value>",
+   "pub fn softmax(&mut self, input: Value, axis: usize) -> Result<Value>",
+   "pub fn log_softmax(&mut self, input: Value, axis: usize) -> Result<Value>",
+   "pub fn bmm(&mut self, left: Value, right: Value) -> Result<Value>",
+   "pub fn sdpa( &mut self, query: Value, key: Value, value: Value, scale: Option<f32>, is_causal: bool, ) -> Result<Value>",
+   "pub fn rope( &mut self, input: Value, seq_axis: usize, rotary_dim: Option<usize>, base: f32, position_offset: usize, ) -> Result<Value>",
+   "pub fn conv_transpose1d( &mut self, input: Value, weight: Value, stride: usize, padding: usize, output_padding: usize, dilation: usize, groups: usize, ) -> Result<Value>",
+   "pub fn conv_transpose2d( &mut self, input: Value, weight: Value, stride: [usize; 2], padding: [usize; 2], output_padding: [usize; 2], dilation: [usize; 2], groups: usize, ) -> Result<Value>",
+   "pub fn pad( &mut self, input: Value, pads: &[(usize, usize)], mode: PadMode, ) -> Result<Value>",
+   "pub fn cat(&mut self, left: Value, right: Value, axis: usize) -> Result<Value>",
+   "pub fn cat_all(&mut self, inputs: &[Value], axis: usize) -> Result<Value>",
+   "pub fn view(&mut self, input: Value, layout: &Layout) -> Result<Value>",
+   "pub fn permute(&mut self, input: Value, axes: &[usize]) -> Result<Value>",
+   "pub fn slice( &mut self, input: Value, axis: usize, start: usize, count: usize, step: isize, ) -> Result<Value>",
+   "pub fn broadcast_to( &mut self, input: Value, shape: impl AsRef<[usize]>, ) -> Result<Value>",
+   "pub fn reshape( &mut self, input: Value, shape: impl AsRef<[usize]>, ) -> Result<Value>",
+   "pub fn detach(&mut self, input: Value) -> Result<Value>",
+   "pub fn finish(self, roots: &[Value]) -> Result<Program>"
+  ]
+ },
+ {
+  "name": "PrepareOptions",
+  "module": "autograd",
+  "decl": "pub struct PrepareOptions<'a> { pub seed_layouts: Option<&'a [Layout]>, pub view_index_limit_bytes: usize, }",
+  "methods": []
+ },
+ {
+  "name": "Program",
+  "module": "autograd",
+  "decl": "pub struct Program(/* private fields */);",
+  "methods": [
+   "pub fn roots(&self) -> &[Value]",
+   "pub fn leaves(&self) -> &[Value]",
+   "pub fn layout(&self, value: Value) -> Result<&Layout>",
+   "pub fn shape(&self, value: Value) -> Result<&Shape>",
+   "pub fn requires_grad(&self, value: Value) -> Result<bool>"
+  ]
+ },
+ {
+  "name": "ReadValue",
+  "module": "autograd",
+  "decl": "pub struct ReadValue<'a, T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn storage(&self) -> &T",
+   "pub fn layout(&self) -> &Layout",
+   "pub fn view(&self) -> Result<TensorView<'_>>"
+  ]
+ },
+ {
+  "name": "Resources",
+  "module": "autograd",
+  "decl": "pub struct Resources { pub activation_bytes: usize, pub gradient_bytes: usize, pub edge_scratch_bytes: usize, pub scalar_seed_bytes: usize, pub operator_workspace_bytes: usize, pub view_index_bytes: usize, pub operator_host_metadata_bytes: usize, pub max_static_shared_bytes_per_block: usize, }",
+  "methods": []
+ },
+ {
+  "name": "Seed",
+  "module": "autograd",
+  "decl": "pub struct Seed<'a, T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn new(value: Value, tensor: &'a T, layout: &'a Layout) -> Self"
+  ]
+ },
+ {
+  "name": "Value",
+  "module": "autograd",
+  "decl": "pub struct Value { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "CONV_WORKSPACE_LIMIT",
+  "module": "",
+  "decl": "pub const CONV_WORKSPACE_LIMIT: usize = _; // 65_536usize",
+  "methods": []
+ },
+ {
+  "name": "MATMUL_WORKSPACE_LIMIT",
+  "module": "",
+  "decl": "pub const MATMUL_WORKSPACE_LIMIT: usize = _; // 65_536usize",
+  "methods": []
+ },
+ {
+  "name": "Cpu",
+  "module": "cpu",
+  "decl": "pub enum Cpu { Reference, }",
+  "methods": [
+   "pub fn matmul(&self, a: &Tensor, b: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "AdamW",
+  "module": "cpu",
+  "decl": "pub struct AdamW { /* private fields */ }",
+  "methods": [
+   "pub fn for_program( program: &Program, leaves: &[Value], config: AdamWConfig, ) -> Result<Self>",
+   "pub fn config(&self) -> AdamWConfig",
+   "pub fn set_lr(&mut self, lr: f32) -> Result<()>",
+   "pub fn set_config(&mut self, config: AdamWConfig) -> Result<()>",
+   "pub fn step_count(&self) -> u64",
+   "pub fn leaves(&self) -> &[Value]",
+   "pub fn state_bytes(&self) -> usize",
+   "pub fn moments(&self, leaf: Value) -> Result<(&Tensor, &Tensor)>",
+   "pub fn apply_slices( &mut self, params: &mut [&mut Tensor], grads: &[&Tensor], ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "BatchedMatmulBackward",
+  "module": "cpu",
+  "decl": "pub struct BatchedMatmulBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, spec: &BmmSpec, left: &Layout, right: &Layout, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &BmmSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, left: Option<&TensorView<'_>>, right: Option<&TensorView<'_>>, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "BatchedMatmulPlan",
+  "module": "cpu",
+  "decl": "pub struct BatchedMatmulPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: &BmmSpec, left: &Layout, right: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &BmmSpec",
+   "pub fn left_layout(&self) -> &Layout",
+   "pub fn right_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, left: &TensorView<'_>, right: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "BinaryBackward",
+  "module": "cpu",
+  "decl": "pub struct BinaryBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( operation: BinaryOp, operand: BinaryOperand, left: &Layout, right: &Layout, upstream: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn operation(&self) -> BinaryOp",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn left_layout(&self) -> &Layout",
+   "pub fn right_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn contraction(&self) -> &ReduceSpec",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, left: Option<&TensorView<'_>>, right: Option<&TensorView<'_>>, upstream: &TensorView<'_>, destination: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "BinaryPlan",
+  "module": "cpu",
+  "decl": "pub struct BinaryPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( operation: BinaryOp, left: &Layout, right: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn operation(&self) -> BinaryOp",
+   "pub fn left_layout(&self) -> &Layout",
+   "pub fn right_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> PointwiseStrategy",
+   "pub fn coalesced_rank(&self) -> usize",
+   "pub fn inner_len(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, left: &TensorView<'_>, right: &TensorView<'_>, destination: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CatBackward",
+  "module": "cpu",
+  "decl": "pub struct CatBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( operand: BinaryOperand, spec: &CatSpec, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &CatSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CatPlan",
+  "module": "cpu",
+  "decl": "pub struct CatPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &CatSpec, left: &Layout, right: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &CatSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, left: &TensorView<'_>, right: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CenteredStft",
+  "module": "cpu",
+  "decl": "pub struct CenteredStft { /* private fields */ }",
+  "methods": [
+   "pub fn new(cpu: Cpu, spec: CenteredStftSpec) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn run(&mut self, x: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CenteredStftBackward",
+  "module": "cpu",
+  "decl": "pub struct CenteredStftBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: CenteredStftSpec, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CenteredStftPlan",
+  "module": "cpu",
+  "decl": "pub struct CenteredStftPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: CenteredStftSpec, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv1d",
+  "module": "cpu",
+  "decl": "pub struct Conv1d { /* private fields */ }",
+  "methods": [
+   "pub fn new(cpu: Cpu, spec: Conv1dSpec, activation: Activation) -> Result<Self>",
+   "pub fn spec(&self) -> Conv1dSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &mut self, x: &Tensor, weights: &Tensor, bias: Option<&Tensor>, out: &mut Tensor, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv1dBackward",
+  "module": "cpu",
+  "decl": "pub struct Conv1dBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, spec: Conv1dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, operand: BinaryOperand, spec: Conv1dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv1dSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn weight_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: Option<&TensorView<'_>>, weight: Option<&TensorView<'_>>, upstream: &TensorView<'_>, out: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv1dPlan",
+  "module": "cpu",
+  "decl": "pub struct Conv1dPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: Conv1dSpec, input: &Layout, weight: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, spec: Conv1dSpec, input: &Layout, weight: &Layout, destination: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv1dSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn weight_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, weight: &TensorView<'_>, out: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv2d",
+  "module": "cpu",
+  "decl": "pub struct Conv2d { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: Conv2dSpec, weights: &Tensor, bias: Option<&Tensor>, activation: Activation, ) -> Result<Self>",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn parameter_bytes(&self) -> usize",
+   "pub fn implementation(&self) -> &str",
+   "pub fn run(&mut self, x: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv2dBackward",
+  "module": "cpu",
+  "decl": "pub struct Conv2dBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, spec: Conv2dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, operand: BinaryOperand, spec: Conv2dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv2dSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn weight_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: Option<&TensorView<'_>>, weight: Option<&TensorView<'_>>, upstream: &TensorView<'_>, out: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Conv2dPlan",
+  "module": "cpu",
+  "decl": "pub struct Conv2dPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: Conv2dSpec, input: &Layout, weight: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, spec: Conv2dSpec, input: &Layout, weight: &Layout, destination: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv2dSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn weight_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, weight: &TensorView<'_>, out: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ConvTranspose1dBackward",
+  "module": "cpu",
+  "decl": "pub struct ConvTranspose1dBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, spec: ConvTranspose1dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> ConvTranspose1dSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: Option<&TensorView<'_>>, weight: Option<&TensorView<'_>>, upstream: &TensorView<'_>, out: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ConvTranspose1dPlan",
+  "module": "cpu",
+  "decl": "pub struct ConvTranspose1dPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: ConvTranspose1dSpec, input: &Layout, weight: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> ConvTranspose1dSpec",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, weight: &TensorView<'_>, out: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ConvTranspose2dBackward",
+  "module": "cpu",
+  "decl": "pub struct ConvTranspose2dBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, spec: Conv2dSpec, input: &Layout, weight: &Layout, upstream: &Layout, gradient: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv2dSpec",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: Option<&TensorView<'_>>, weight: Option<&TensorView<'_>>, upstream: &TensorView<'_>, out: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ConvTranspose2dPlan",
+  "module": "cpu",
+  "decl": "pub struct ConvTranspose2dPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: Conv2dSpec, input: &Layout, weight: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> Conv2dSpec",
+   "pub fn strategy(&self) -> ConvStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, weight: &TensorView<'_>, out: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CopyPlan",
+  "module": "cpu",
+  "decl": "pub struct CopyPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(source: &Layout, destination: &Layout) -> Result<Self>",
+   "pub fn source_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, source: &TensorView<'_>, destination: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CrossEntropyBackward",
+  "module": "cpu",
+  "decl": "pub struct CrossEntropyBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: CrossEntropySpec) -> Self",
+   "pub fn spec(&self) -> CrossEntropySpec",
+   "pub fn run( &self, logits: &Tensor, targets: &IndexTensor, upstream: f32, grad_logits: &mut Tensor, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "CrossEntropyPlan",
+  "module": "cpu",
+  "decl": "pub struct CrossEntropyPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: CrossEntropySpec) -> Self",
+   "pub fn spec(&self) -> CrossEntropySpec",
+   "pub fn run( &self, logits: &Tensor, targets: &IndexTensor, output: &mut Tensor, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "DropoutBackward",
+  "module": "cpu",
+  "decl": "pub struct DropoutBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &DropoutSpec, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &DropoutSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn run( &self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, step: u64, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "DropoutPlan",
+  "module": "cpu",
+  "decl": "pub struct DropoutPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &DropoutSpec, input: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &DropoutSpec",
+   "pub fn run( &self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, step: u64, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "EmbeddingBackward",
+  "module": "cpu",
+  "decl": "pub struct EmbeddingBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: EmbeddingSpec) -> Self",
+   "pub fn spec(&self) -> &EmbeddingSpec",
+   "pub fn run( &self, indices: &IndexTensor, upstream: &Tensor, grad_table: &mut Tensor, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "EmbeddingPlan",
+  "module": "cpu",
+  "decl": "pub struct EmbeddingPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: EmbeddingSpec) -> Self",
+   "pub fn spec(&self) -> &EmbeddingSpec",
+   "pub fn run( &self, table: &Tensor, indices: &IndexTensor, output: &mut Tensor, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Graph",
+  "module": "cpu",
+  "decl": "pub struct Graph(/* private fields */);",
+  "methods": [
+   "pub fn new(cpu: Cpu, program: Program) -> Result<Self>",
+   "pub fn input_shape(&self) -> &[usize]",
+   "pub fn output_shape(&self) -> &[usize]",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn parameter_bytes(&self) -> usize",
+   "pub fn intermediate(&self, value: Value) -> Option<&Tensor>",
+   "pub fn run(&mut self, input: &Tensor, output: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Gru",
+  "module": "cpu",
+  "decl": "pub struct Gru { /* private fields */ }",
+  "methods": [
+   "pub fn new(cpu: Cpu, spec: GruSpec, weights: &GruWeights) -> Result<Self>",
+   "pub fn spec(&self) -> GruSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn parameter_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &Tensor, initial: &Tensor, output: &mut Tensor, final_state: &mut Tensor, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Istft",
+  "module": "cpu",
+  "decl": "pub struct Istft { /* private fields */ }",
+  "methods": [
+   "pub fn new(cpu: Cpu, spec: CenteredStftSpec) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run(&mut self, spectrum: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "IstftBackward",
+  "module": "cpu",
+  "decl": "pub struct IstftBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: CenteredStftSpec, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "IstftPlan",
+  "module": "cpu",
+  "decl": "pub struct IstftPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: CenteredStftSpec, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: CenteredStftSpec, window: &Tensor, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> CenteredStftSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "MatmulBackward",
+  "module": "cpu",
+  "decl": "pub struct MatmulBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, operand: BinaryOperand, left: &Layout, right: &Layout, upstream: &Layout, gradient: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, operand: BinaryOperand, left: &Layout, right: &Layout, upstream: &Layout, gradient: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn operand(&self) -> BinaryOperand",
+   "pub fn left_layout(&self) -> &Layout",
+   "pub fn right_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn input_dependencies(&self) -> [bool; 2]",
+   "pub fn strategy(&self) -> MatmulStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, left: Option<&TensorView<'_>>, right: Option<&TensorView<'_>>, upstream: &TensorView<'_>, out: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "MatmulPlan",
+  "module": "cpu",
+  "decl": "pub struct MatmulPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, left: &Layout, right: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn with_workspace_limit( cpu: Cpu, left: &Layout, right: &Layout, destination: &Layout, limit: usize, ) -> Result<Self>",
+   "pub fn left_layout(&self) -> &Layout",
+   "pub fn right_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> MatmulStrategy",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, left: &TensorView<'_>, right: &TensorView<'_>, out: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "NormBackward",
+  "module": "cpu",
+  "decl": "pub struct NormBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &NormSpec, input: &Layout, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &NormSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "NormPlan",
+  "module": "cpu",
+  "decl": "pub struct NormPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &NormSpec, input: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &NormSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "PadBackward",
+  "module": "cpu",
+  "decl": "pub struct PadBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &PadSpec, upstream: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &PadSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "PadPlan",
+  "module": "cpu",
+  "decl": "pub struct PadPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &PadSpec, input: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &PadSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "PreparedConv1d",
+  "module": "cpu",
+  "decl": "pub struct PreparedConv1d { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: Conv1dSpec, weights: &Tensor, bias: Option<&Tensor>, activation: Activation, ) -> Result<Self>",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn parameter_bytes(&self) -> usize",
+   "pub fn implementation(&self) -> &str",
+   "pub fn run(&mut self, x: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ReduceBackward",
+  "module": "cpu",
+  "decl": "pub struct ReduceBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &ReduceSpec, upstream: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn with_input( spec: &ReduceSpec, source: &Layout, upstream: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn input_required(&self) -> bool",
+   "pub fn spec(&self) -> &ReduceSpec",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, upstream: &TensorView<'_>, destination: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>",
+   "pub fn run_with_input( &self, source: Option<&TensorView<'_>>, upstream: &TensorView<'_>, destination: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ReducePlan",
+  "module": "cpu",
+  "decl": "pub struct ReducePlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &ReduceSpec, source: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &ReduceSpec",
+   "pub fn source_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, source: &TensorView<'_>, destination: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "RopeBackward",
+  "module": "cpu",
+  "decl": "pub struct RopeBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &RopeSpec, upstream: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &RopeSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "RopePlan",
+  "module": "cpu",
+  "decl": "pub struct RopePlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &RopeSpec, input: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &RopeSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "SdpaBackward",
+  "module": "cpu",
+  "decl": "pub struct SdpaBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( operand: SdpaOperand, spec: SdpaSpec, query: &Layout, key: &Layout, value: &Layout, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> SdpaSpec",
+   "pub fn operand(&self) -> SdpaOperand",
+   "pub fn input_dependencies(&self) -> [bool; 3]",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, query: Option<&TensorView<'_>>, key: Option<&TensorView<'_>>, value: Option<&TensorView<'_>>, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "SdpaPlan",
+  "module": "cpu",
+  "decl": "pub struct SdpaPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: SdpaSpec, query: &Layout, key: &Layout, value: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> SdpaSpec",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, query: &TensorView<'_>, key: &TensorView<'_>, value: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "SoftmaxBackward",
+  "module": "cpu",
+  "decl": "pub struct SoftmaxBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( spec: &SoftmaxSpec, input: &Layout, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> &SoftmaxSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>",
+   "pub fn run_from_output( &self, output: &TensorView<'_>, upstream: &TensorView<'_>, grad_input: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "SoftmaxPlan",
+  "module": "cpu",
+  "decl": "pub struct SoftmaxPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new(spec: &SoftmaxSpec, input: &Layout, output: &Layout) -> Result<Self>",
+   "pub fn spec(&self) -> &SoftmaxSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Stft",
+  "module": "cpu",
+  "decl": "pub struct Stft { /* private fields */ }",
+  "methods": [
+   "pub fn new(cpu: Cpu, spec: StftSpec) -> Result<Self>",
+   "pub fn with_window(cpu: Cpu, spec: StftSpec, window: &Tensor) -> Result<Self>",
+   "pub fn spec(&self) -> StftSpec",
+   "pub fn run(&mut self, x: &Tensor, out: &mut Tensor) -> Result<()>"
+  ]
+ },
+ {
+  "name": "StftBackward",
+  "module": "cpu",
+  "decl": "pub struct StftBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: StftSpec, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: StftSpec, window: &Tensor, upstream: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> StftSpec",
+   "pub fn input_required(&self) -> bool",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, upstream: &TensorView<'_>, output: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "StftPlan",
+  "module": "cpu",
+  "decl": "pub struct StftPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, spec: StftSpec, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn with_window( cpu: Cpu, spec: StftSpec, window: &Tensor, input: &Layout, output: &Layout, ) -> Result<Self>",
+   "pub fn spec(&self) -> StftSpec",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn output_layout(&self) -> &Layout",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn run( &mut self, input: &TensorView<'_>, output: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Tape",
+  "module": "cpu",
+  "decl": "pub struct Tape { /* private fields */ }",
+  "methods": [
+   "pub fn new( cpu: Cpu, program: &Program, bindings: &[Binding<Tensor>], ) -> Result<Self>",
+   "pub fn with_options( cpu: Cpu, program: &Program, bindings: &[Binding<Tensor>], options: PrepareOptions<'_>, ) -> Result<Self>",
+   "pub fn forward(&mut self) -> Result<()>",
+   "pub fn backward( &mut self, seeds: &[Seed<'_, Tensor>], mode: GradientMode, ) -> Result<()>",
+   "pub fn backward_scalar(&mut self, mode: GradientMode) -> Result<()>",
+   "pub fn output(&self, root: Value) -> Result<ReadValue<'_, Tensor>>",
+   "pub fn gradient_status(&self, leaf: Value) -> Result<GradientStatus>",
+   "pub fn gradient(&self, leaf: Value) -> Result<Option<&Tensor>>",
+   "pub fn zero_grad(&mut self) -> Result<()>",
+   "pub fn sgd(&mut self, leaves: &[Value], rate: f32) -> Result<()>",
+   "pub fn synchronize(&mut self) -> Result<()>",
+   "pub fn resources(&self) -> Resources",
+   "pub fn has_fused_plan(&self) -> bool",
+   "pub fn step( &mut self, seeds: &[Seed<'_, Tensor>], leaves: &[Value], rate: f32, ) -> Result<()>",
+   "pub fn step_scalar(&mut self, leaves: &[Value], rate: f32) -> Result<()>",
+   "pub fn apply_adamw(&mut self, optimizer: &mut AdamW) -> Result<()>",
+   "pub fn step_adamw( &mut self, seeds: &[Seed<'_, Tensor>], optimizer: &mut AdamW, ) -> Result<()>",
+   "pub fn step_scalar_adamw(&mut self, optimizer: &mut AdamW) -> Result<()>"
+  ]
+ },
+ {
+  "name": "UnaryBackward",
+  "module": "cpu",
+  "decl": "pub struct UnaryBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( operation: UnaryOp, input: &Layout, upstream: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn operation(&self) -> UnaryOp",
+   "pub fn input_required(&self) -> bool",
+   "pub fn input_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn contraction(&self) -> &ReduceSpec",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, input: Option<&TensorView<'_>>, upstream: &TensorView<'_>, destination: &mut TensorViewMut<'_>, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "UnaryPlan",
+  "module": "cpu",
+  "decl": "pub struct UnaryPlan { /* private fields */ }",
+  "methods": [
+   "pub fn new( operation: UnaryOp, source: &Layout, destination: &Layout, ) -> Result<Self>",
+   "pub fn operation(&self) -> UnaryOp",
+   "pub fn source_layout(&self) -> &Layout",
+   "pub fn destination_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> PointwiseStrategy",
+   "pub fn coalesced_rank(&self) -> usize",
+   "pub fn inner_len(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, source: &TensorView<'_>, destination: &mut TensorViewMut<'_>, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "ViewBackward",
+  "module": "cpu",
+  "decl": "pub struct ViewBackward { /* private fields */ }",
+  "methods": [
+   "pub fn new( base_shape: impl AsRef<[usize]>, view: &Layout, upstream: &Layout, index_limit_bytes: usize, ) -> Result<Self>",
+   "pub fn base_shape(&self) -> &[usize]",
+   "pub fn view_layout(&self) -> &Layout",
+   "pub fn upstream_layout(&self) -> &Layout",
+   "pub fn strategy(&self) -> ViewBackwardStrategy",
+   "pub fn reduction_lanes(&self) -> usize",
+   "pub fn index_bytes(&self) -> usize",
+   "pub fn preparation_index_bytes(&self) -> usize",
+   "pub fn host_metadata_bytes(&self) -> usize",
+   "pub fn workspace_bytes(&self) -> usize",
+   "pub fn run( &self, upstream: &TensorView<'_>, out: &mut Tensor, mode: GradientMode, ) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Activation",
+  "module": "",
+  "decl": "pub enum Activation { Identity, Relu, }",
+  "methods": []
+ },
+ {
+  "name": "BinaryOp",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum BinaryOp { Add = 0, Sub = 1, Mul = 2, Div = 3, }",
+  "methods": []
+ },
+ {
+  "name": "BinaryOperand",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum BinaryOperand { Left = 0, Right = 1, }",
+  "methods": []
+ },
+ {
+  "name": "ConvStrategy",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum ConvStrategy { Reference = 0, Mkl = 1, PackedMkl = 2, Cublas = 3, TiledCuda = 4, }",
+  "methods": []
+ },
+ {
+  "name": "DType",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum DType { F32 = 0, Bf16 = 1, F16 = 2, I64 = 3, }",
+  "methods": [
+   "pub const fn byte_size(self) -> usize"
+  ]
+ },
+ {
+  "name": "Error",
+  "module": "",
+  "decl": "pub enum Error { Invalid(String), Allocation(String), Unsupported(String), StorageIdentityMismatch { saved: StorageId, current: StorageId, }, StorageModified { storage: StorageId, saved: u64, current: u64, }, StorageIdentityExhausted, StorageGenerationExhausted, StorageBorrowConflict, Native { backend: &'static str, code: i64, }, }",
+  "methods": []
+ },
+ {
+  "name": "GradientMode",
+  "module": "",
+  "decl": "pub enum GradientMode { Overwrite, Accumulate, }",
+  "methods": []
+ },
+ {
+  "name": "MatmulStrategy",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum MatmulStrategy { Empty = 0, Zero = 1, Reference = 2, Mkl = 3, PackedMkl = 4, Cublas = 5, StridedCuda = 6, }",
+  "methods": []
+ },
+ {
+  "name": "NormKind",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum NormKind { LayerNorm = 0, RmsNorm = 1, }",
+  "methods": []
+ },
+ {
+  "name": "PadMode",
+  "module": "",
+  "decl": "pub enum PadMode { Constant(f32), Reflect, Replicate, }",
+  "methods": []
+ },
+ {
+  "name": "PointwiseStrategy",
+  "module": "",
+  "decl": "pub enum PointwiseStrategy { Empty, Contiguous, ContiguousRows, Strided, }",
+  "methods": []
+ },
+ {
+  "name": "PrecisionPolicy",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum PrecisionPolicy { StrictFp32 = 0, Tf32 = 1, Bf16Mixed = 2, }",
+  "methods": []
+ },
+ {
+  "name": "ReduceOp",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum ReduceOp { Sum = 0, Mean = 1, Max = 2, Min = 3, LogSumExp = 4, }",
+  "methods": [
+   "pub const fn requires_input(self) -> bool"
+  ]
+ },
+ {
+  "name": "ReduceStrategy",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum ReduceStrategy { Empty = 0, EmptyReduction = 1, Copy = 2, Tree32 = 3, Tree256 = 4, }",
+  "methods": []
+ },
+ {
+  "name": "SdpaOperand",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum SdpaOperand { Query = 0, Key = 1, Value = 2, }",
+  "methods": []
+ },
+ {
+  "name": "SoftmaxKind",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum SoftmaxKind { Softmax = 0, LogSoftmax = 1, }",
+  "methods": []
+ },
+ {
+  "name": "UnaryOp",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum UnaryOp { Neg = 0, Abs = 1, Square = 2, Reciprocal = 3, Sqrt = 4, Exp = 5, Log = 6, Relu = 7, Sigmoid = 8, Tanh = 9, Silu = 10, Softplus = 11, }",
+  "methods": []
+ },
+ {
+  "name": "ViewBackwardStrategy",
+  "module": "",
+  "decl": "#[repr(i32)]pub enum ViewBackwardStrategy { Empty = 0, Contiguous = 1, InjectiveStrided = 2, Broadcast = 3, Indexed = 4, Grouped = 5, }",
+  "methods": []
+ },
+ {
+  "name": "bf16_to_f32",
+  "module": "",
+  "decl": "pub fn bf16_to_f32(bits: u16) -> f32",
+  "methods": []
+ },
+ {
+  "name": "f16_to_f32",
+  "module": "",
+  "decl": "pub fn f16_to_f32(bits: u16) -> f32",
+  "methods": []
+ },
+ {
+  "name": "f32_to_bf16",
+  "module": "",
+  "decl": "pub fn f32_to_bf16(value: f32) -> u16",
+  "methods": []
+ },
+ {
+  "name": "f32_to_f16",
+  "module": "",
+  "decl": "pub fn f32_to_f16(value: f32) -> u16",
+  "methods": []
+ },
+ {
+  "name": "philox4x32_10",
+  "module": "",
+  "decl": "pub fn philox4x32_10(ctr: [u32; 4], key: [u32; 2]) -> [u32; 4]",
+  "methods": []
+ },
+ {
+  "name": "u32_to_unit_f32",
+  "module": "",
+  "decl": "pub fn u32_to_unit_f32(word: u32) -> f32",
+  "methods": []
+ },
+ {
+  "name": "Unary",
+  "module": "graph",
+  "decl": "pub enum Unary { Sigmoid, Tanh, PRelu(f32), }",
+  "methods": []
+ },
+ {
+  "name": "Builder",
+  "module": "graph",
+  "decl": "pub struct Builder { /* private fields */ }",
+  "methods": [
+   "pub fn new(input: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn input(&self) -> Value",
+   "pub fn shape(&self, value: Value) -> Result<&[usize]>",
+   "pub fn constant(&mut self, tensor: Tensor) -> Result<Value>",
+   "pub fn layout( &mut self, input: Value, ranges: &[(usize, usize)], axes: &[usize], output: impl AsRef<[usize]>, ) -> Result<Value>",
+   "pub fn unary(&mut self, input: Value, operation: Unary) -> Result<Value>",
+   "pub fn add(&mut self, a: Value, b: Value) -> Result<Value>",
+   "pub fn multiply_broadcast(&mut self, a: Value, b: Value) -> Result<Value>",
+   "pub fn concat( &mut self, a: Value, b: Value, axis: usize, interleave: bool, ) -> Result<Value>",
+   "pub fn pad_axis( &mut self, input: Value, axis: usize, before: usize, after: usize, ) -> Result<Value>",
+   "pub fn unfold_frequency(&mut self, input: Value, kernel: usize) -> Result<Value>",
+   "pub fn mean_square_last(&mut self, input: Value) -> Result<Value>",
+   "pub fn layer_norm( &mut self, input: Value, scale: &Tensor, bias: &Tensor, epsilon: f32, ) -> Result<Value>",
+   "pub fn complex_features( &mut self, spectrum: Value, epsilon: f32, ) -> Result<Value>",
+   "pub fn complex_mask(&mut self, mask: Value, spectrum: Value) -> Result<Value>",
+   "pub fn linear( &mut self, input: Value, weights: &Tensor, bias: Option<&Tensor>, output: impl AsRef<[usize]>, ) -> Result<Value>",
+   "pub fn conv2d( &mut self, input: Value, spec: Conv2dSpec, weights: &Tensor, bias: Option<&Tensor>, activation: Activation, ) -> Result<Value>",
+   "pub fn gru( &mut self, input: Value, initial: Value, spec: GruSpec, weights: GruWeights, ) -> Result<(Value, Value)>",
+   "pub fn finish(self, output: Value) -> Result<Program>"
+  ]
+ },
+ {
+  "name": "Program",
+  "module": "graph",
+  "decl": "pub struct Program { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "Value",
+  "module": "graph",
+  "decl": "pub struct Value { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "build",
+  "module": "models::gtcrn",
+  "decl": "pub fn build( batch: usize, frames: usize, parameters: &Parameters, ) -> Result<ModelGraph>",
+  "methods": []
+ },
+ {
+  "name": "ModelGraph",
+  "module": "models::gtcrn",
+  "decl": "pub struct ModelGraph { pub program: Program, pub probes: BTreeMap<String, Value>, }",
+  "methods": []
+ },
+ {
+  "name": "Parameters",
+  "module": "models::gtcrn",
+  "decl": "pub struct Parameters { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "AdamWConfig",
+  "module": "",
+  "decl": "pub struct AdamWConfig { pub lr: f32, pub beta1: f32, pub beta2: f32, pub eps: f32, pub weight_decay: f32, pub max_grad_norm: Option<f32>, }",
+  "methods": [
+   "pub fn validate(&self) -> Result<()>"
+  ]
+ },
+ {
+  "name": "Bf16Tensor",
+  "module": "",
+  "decl": "pub struct Bf16Tensor { /* private fields */ }",
+  "methods": [
+   "pub fn from_bits(dims: impl AsRef<[usize]>, data: Vec<u16>) -> Result<Self>",
+   "pub fn zeros(dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn from_f32(tensor: &Tensor) -> Result<Self>",
+   "pub fn to_f32(&self) -> Result<Tensor>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn dtype(&self) -> DType",
+   "pub fn bits(&self) -> &[u16]",
+   "pub fn bits_mut(&mut self) -> &mut [u16]",
+   "pub fn into_bits(self) -> Vec<u16>"
+  ]
+ },
+ {
+  "name": "BmmSpec",
+  "module": "",
+  "decl": "pub struct BmmSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new(left: &Shape, right: &Shape) -> Result<Self>",
+   "pub fn left_shape(&self) -> &Shape",
+   "pub fn right_shape(&self) -> &Shape",
+   "pub fn output_shape(&self) -> &Shape",
+   "pub fn batch_dims(&self) -> &[usize]",
+   "pub fn m(&self) -> usize",
+   "pub fn k(&self) -> usize",
+   "pub fn n(&self) -> usize"
+  ]
+ },
+ {
+  "name": "CatSpec",
+  "module": "",
+  "decl": "pub struct CatSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new(left: &Shape, right: &Shape, axis: usize) -> Result<Self>",
+   "pub fn left_shape(&self) -> &Shape",
+   "pub fn right_shape(&self) -> &Shape",
+   "pub fn output_shape(&self) -> &Shape",
+   "pub fn axis(&self) -> usize"
+  ]
+ },
+ {
+  "name": "CenteredStftSpec",
+  "module": "",
+  "decl": "pub struct CenteredStftSpec { /* private fields */ }",
+  "methods": [
+   "pub fn spec(&self) -> StftSpec",
+   "pub fn frames(&self) -> usize",
+   "pub fn bins(&self) -> usize",
+   "pub fn input_shape(&self) -> [usize; 2]",
+   "pub fn output_shape(&self) -> [usize; 4]"
+  ]
+ },
+ {
+  "name": "Checkpoint",
+  "module": "",
+  "decl": "pub struct Checkpoint { /* private fields */ }",
+  "methods": [
+   "pub fn new(step_count: u64, config: Option<AdamWConfig>) -> Result<Self>",
+   "pub fn step_count(&self) -> u64",
+   "pub fn config(&self) -> Option<AdamWConfig>",
+   "pub fn param(&self, name: &str) -> Option<&Tensor>",
+   "pub fn moments(&self, name: &str) -> Option<(&Tensor, &Tensor)>",
+   "pub fn add_param( &mut self, name: impl Into<String>, tensor: &Tensor, ) -> Result<()>",
+   "pub fn add_moments( &mut self, name: impl Into<String>, m: &Tensor, v: &Tensor, ) -> Result<()>",
+   "pub fn from_cpu_state( params: &[(&str, &Shared<Tensor>)], optimizer: Option<(&CpuAdamW, &[(&str, Value)])>, ) -> Result<Self>",
+   "pub fn restore_cpu_state( &self, params: &[(&str, &Shared<Tensor>)], optimizer: Option<(&mut CpuAdamW, &[(&str, Value)])>, ) -> Result<()>",
+   "pub fn to_bytes(&self) -> Result<Vec<u8>>",
+   "pub fn from_bytes(bytes: &[u8]) -> Result<Self>",
+   "pub fn save_file(&self, path: impl AsRef<Path>) -> Result<()>",
+   "pub fn load_file(path: impl AsRef<Path>) -> Result<Self>"
+  ]
+ },
+ {
+  "name": "Conv1dSpec",
+  "module": "",
+  "decl": "pub struct Conv1dSpec { pub batch: usize, pub in_channels: usize, pub out_channels: usize, pub input_len: usize, pub kernel: usize, pub stride: usize, pub padding: usize, pub dilation: usize, pub groups: usize, }",
+  "methods": [
+   "pub fn output_len(&self) -> Result<usize>",
+   "pub fn input_shape(&self) -> [usize; 3]",
+   "pub fn weight_shape(&self) -> [usize; 3]",
+   "pub fn output_shape(&self) -> Result<[usize; 3]>"
+  ]
+ },
+ {
+  "name": "Conv2dSpec",
+  "module": "",
+  "decl": "pub struct Conv2dSpec { pub batch: usize, pub in_channels: usize, pub out_channels: usize, pub input: [usize; 2], pub kernel: [usize; 2], pub stride: [usize; 2], pub padding: [usize; 2], pub dilation: [usize; 2], pub groups: usize, pub transposed: bool, pub output_padding: [usize; 2], }",
+  "methods": [
+   "pub fn input_shape(&self) -> [usize; 4]",
+   "pub fn weight_shape(&self) -> [usize; 4]",
+   "pub fn output_shape(&self) -> Result<[usize; 4]>"
+  ]
+ },
+ {
+  "name": "ConvTranspose1dSpec",
+  "module": "",
+  "decl": "pub struct ConvTranspose1dSpec { pub batch: usize, pub in_channels: usize, pub out_channels: usize, pub input_len: usize, pub kernel: usize, pub stride: usize, pub padding: usize, pub output_padding: usize, pub dilation: usize, pub groups: usize, }",
+  "methods": [
+   "pub fn input_shape(&self) -> [usize; 3]",
+   "pub fn weight_shape(&self) -> [usize; 3]",
+   "pub fn output_len(&self) -> Result<usize>",
+   "pub fn output_shape(&self) -> Result<[usize; 3]>"
+  ]
+ },
+ {
+  "name": "CrossEntropySpec",
+  "module": "",
+  "decl": "pub struct CrossEntropySpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( num_rows: usize, vocab_size: usize, ignore_index: Option<i64>, label_smoothing: f32, ) -> Result<Self>",
+   "pub fn num_rows(&self) -> usize",
+   "pub fn vocab_size(&self) -> usize",
+   "pub fn ignore_index(&self) -> Option<i64>",
+   "pub fn label_smoothing(&self) -> f32"
+  ]
+ },
+ {
+  "name": "DropoutSpec",
+  "module": "",
+  "decl": "pub struct DropoutSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new(shape: &Shape, p: f32, seed: u64) -> Result<Self>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn p(&self) -> f32",
+   "pub fn seed(&self) -> u64",
+   "pub fn inv_keep_prob(&self) -> f32"
+  ]
+ },
+ {
+  "name": "Elements",
+  "module": "",
+  "decl": "pub struct Elements<'a> { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "ElementsMut",
+  "module": "",
+  "decl": "pub struct ElementsMut<'a> { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "EmbeddingSpec",
+  "module": "",
+  "decl": "pub struct EmbeddingSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( vocab_size: usize, embed_dim: usize, index_shape: &Shape, padding_idx: Option<i64>, ) -> Result<Self>",
+   "pub fn vocab_size(&self) -> usize",
+   "pub fn embed_dim(&self) -> usize",
+   "pub fn index_shape(&self) -> &Shape",
+   "pub fn output_shape(&self) -> &Shape",
+   "pub fn table_shape(&self) -> Result<Shape>",
+   "pub fn padding_idx(&self) -> Option<i64>",
+   "pub fn num_indices(&self) -> usize"
+  ]
+ },
+ {
+  "name": "GruSpec",
+  "module": "",
+  "decl": "pub struct GruSpec { pub batch: usize, pub steps: usize, pub input_size: usize, pub hidden_size: usize, pub bidirectional: bool, }",
+  "methods": [
+   "pub fn directions(&self) -> usize",
+   "pub fn input_shape(&self) -> [usize; 3]",
+   "pub fn state_shape(&self) -> [usize; 3]",
+   "pub fn output_shape(&self) -> Result<[usize; 3]>"
+  ]
+ },
+ {
+  "name": "GruWeights",
+  "module": "",
+  "decl": "pub struct GruWeights { pub input: Tensor, pub hidden: Tensor, pub input_bias: Tensor, pub hidden_bias: Tensor, }",
+  "methods": []
+ },
+ {
+  "name": "IndexTensor",
+  "module": "",
+  "decl": "pub struct IndexTensor { /* private fields */ }",
+  "methods": [
+   "pub fn from_vec(dims: impl AsRef<[usize]>, data: Vec<i64>) -> Result<Self>",
+   "pub fn zeros(dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn dtype(&self) -> DType",
+   "pub fn data(&self) -> &[i64]",
+   "pub fn data_mut(&mut self) -> &mut [i64]",
+   "pub fn into_vec(self) -> Vec<i64>"
+  ]
+ },
+ {
+  "name": "Layout",
+  "module": "",
+  "decl": "pub struct Layout { /* private fields */ }",
+  "methods": [
+   "pub fn contiguous(dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn from_strides( dims: impl AsRef<[usize]>, strides: impl AsRef<[isize]>, offset: usize, ) -> Result<Self>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn strides(&self) -> &[isize]",
+   "pub fn offset(&self) -> usize",
+   "pub fn span(&self) -> Option<Range<usize>>",
+   "pub fn is_contiguous(&self) -> bool",
+   "pub fn is_non_overlapping(&self) -> bool",
+   "pub fn index(&self, coordinates: &[usize]) -> Option<usize>",
+   "pub fn linear_index(&self, flat: usize) -> Option<usize>",
+   "pub fn offsets(&self) -> LayoutOffsets<'_> ⓘ",
+   "pub fn permute(&self, axes: &[usize]) -> Result<Self>",
+   "pub fn slice( &self, axis: usize, start: usize, count: usize, step: isize, ) -> Result<Self>",
+   "pub fn broadcast_to(&self, dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn reshape(&self, dims: impl AsRef<[usize]>) -> Result<Self>"
+  ]
+ },
+ {
+  "name": "LayoutOffsets",
+  "module": "",
+  "decl": "pub struct LayoutOffsets<'a> { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "NormSpec",
+  "module": "",
+  "decl": "pub struct NormSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( kind: NormKind, shape: &Shape, normalized_dims: usize, eps: f32, ) -> Result<Self>",
+   "pub fn kind(&self) -> NormKind",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn normalized_dims(&self) -> usize",
+   "pub fn eps(&self) -> f32",
+   "pub fn groups(&self) -> usize",
+   "pub fn inner_len(&self) -> usize"
+  ]
+ },
+ {
+  "name": "PadSpec",
+  "module": "",
+  "decl": "pub struct PadSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( input: &Shape, pads: &[(usize, usize)], mode: PadMode, ) -> Result<Self>",
+   "pub fn input_shape(&self) -> &Shape",
+   "pub fn output_shape(&self) -> &Shape",
+   "pub fn pads(&self) -> &[(usize, usize)]",
+   "pub fn mode(&self) -> PadMode"
+  ]
+ },
+ {
+  "name": "ReadGuard",
+  "module": "",
+  "decl": "pub struct ReadGuard<'a, T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn version(&self) -> StorageVersion"
+  ]
+ },
+ {
+  "name": "ReduceSpec",
+  "module": "",
+  "decl": "pub struct ReduceSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( operation: ReduceOp, input: &Shape, axes: &[usize], keep_dims: bool, ) -> Result<Self>",
+   "pub fn operation(&self) -> ReduceOp",
+   "pub fn input_shape(&self) -> &Shape",
+   "pub fn output_shape(&self) -> &Shape",
+   "pub fn axes(&self) -> &[usize]",
+   "pub fn keep_dims(&self) -> bool",
+   "pub fn reduction_len(&self) -> Option<usize>",
+   "pub fn strategy(&self) -> ReduceStrategy",
+   "pub fn reduction_lanes(&self) -> usize"
+  ]
+ },
+ {
+  "name": "RopeSpec",
+  "module": "",
+  "decl": "pub struct RopeSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( shape: &Shape, seq_axis: usize, rotary_dim: Option<usize>, base: f32, position_offset: usize, ) -> Result<Self>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn seq_axis(&self) -> usize",
+   "pub fn seq_len(&self) -> usize",
+   "pub fn head_dim(&self) -> usize",
+   "pub fn rotary_dim(&self) -> usize",
+   "pub fn base(&self) -> f32",
+   "pub fn position_offset(&self) -> usize",
+   "pub fn batch(&self) -> usize",
+   "pub fn num_heads(&self) -> usize",
+   "pub fn build_tables(&self) -> (Vec<f32>, Vec<f32>)"
+  ]
+ },
+ {
+  "name": "SavedRead",
+  "module": "",
+  "decl": "pub struct SavedRead<'a, T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn storage(&self) -> &T",
+   "pub fn layout(&self) -> &Layout",
+   "pub fn view(&self) -> Result<TensorView<'_>>"
+  ]
+ },
+ {
+  "name": "SavedValue",
+  "module": "",
+  "decl": "pub struct SavedValue<T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn layout(&self) -> &Layout",
+   "pub fn version(&self) -> StorageVersion",
+   "pub fn read(&self) -> Result<SavedRead<'_, T>>"
+  ]
+ },
+ {
+  "name": "SdpaSpec",
+  "module": "",
+  "decl": "pub struct SdpaSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new( batch: usize, num_heads: usize, num_kv_heads: usize, seq_q: usize, seq_k: usize, head_dim: usize, scale: Option<f32>, is_causal: bool, ) -> Result<Self>",
+   "pub fn batch(&self) -> usize",
+   "pub fn num_heads(&self) -> usize",
+   "pub fn num_kv_heads(&self) -> usize",
+   "pub fn seq_q(&self) -> usize",
+   "pub fn seq_k(&self) -> usize",
+   "pub fn head_dim(&self) -> usize",
+   "pub fn scale(&self) -> f32",
+   "pub fn is_causal(&self) -> bool",
+   "pub fn query_shape(&self) -> Shape",
+   "pub fn kv_shape(&self) -> Shape",
+   "pub fn output_shape(&self) -> Shape"
+  ]
+ },
+ {
+  "name": "Shape",
+  "module": "",
+  "decl": "pub struct Shape { /* private fields */ }",
+  "methods": [
+   "pub fn new(dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn dims(&self) -> &[usize]",
+   "pub fn len(&self) -> usize",
+   "pub fn is_empty(&self) -> bool"
+  ]
+ },
+ {
+  "name": "Shared",
+  "module": "",
+  "decl": "pub struct Shared<T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn new(value: T) -> Result<Self>",
+   "pub fn from_tracked(value: Tracked<T>) -> Self",
+   "pub fn read(&self) -> Result<ReadGuard<'_, T>>",
+   "pub fn write(&self) -> Result<WriteGuard<'_, T>>",
+   "pub fn version(&self) -> Result<StorageVersion>",
+   "pub fn save(&self, layout: &Arc<Layout>) -> Result<SavedValue<T>>",
+   "pub fn try_unwrap(self) -> Result<Tracked<T>, Self>"
+  ]
+ },
+ {
+  "name": "SoftmaxSpec",
+  "module": "",
+  "decl": "pub struct SoftmaxSpec { /* private fields */ }",
+  "methods": [
+   "pub fn new(kind: SoftmaxKind, shape: &Shape, axis: usize) -> Result<Self>",
+   "pub fn kind(&self) -> SoftmaxKind",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn axis(&self) -> usize",
+   "pub fn groups(&self) -> usize",
+   "pub fn axis_len(&self) -> usize"
+  ]
+ },
+ {
+  "name": "StftSpec",
+  "module": "",
+  "decl": "pub struct StftSpec { pub batch: usize, pub input_len: usize, pub fft_size: usize, pub hop: usize, }",
+  "methods": [
+   "pub fn frames(&self) -> Result<usize>",
+   "pub fn bins(&self) -> usize",
+   "pub fn input_shape(&self) -> [usize; 2]",
+   "pub fn output_shape(&self) -> Result<[usize; 4]>",
+   "pub fn centered(self) -> Result<CenteredStftSpec>"
+  ]
+ },
+ {
+  "name": "StorageId",
+  "module": "",
+  "decl": "pub struct StorageId(/* private fields */);",
+  "methods": []
+ },
+ {
+  "name": "StorageVersion",
+  "module": "",
+  "decl": "pub struct StorageVersion { /* private fields */ }",
+  "methods": [
+   "pub const fn storage_id(self) -> StorageId",
+   "pub const fn generation(self) -> u64"
+  ]
+ },
+ {
+  "name": "Tensor",
+  "module": "",
+  "decl": "pub struct Tensor { /* private fields */ }",
+  "methods": [
+   "pub fn from_vec(dims: impl AsRef<[usize]>, data: Vec<f32>) -> Result<Self>",
+   "pub fn zeros(dims: impl AsRef<[usize]>) -> Result<Self>",
+   "pub fn shape(&self) -> &Shape",
+   "pub fn data(&self) -> &[f32]",
+   "pub fn data_mut(&mut self) -> &mut [f32]",
+   "pub fn into_vec(self) -> Vec<f32>",
+   "pub fn view<'a>(&'a self, layout: &'a Layout) -> Result<TensorView<'a>>",
+   "pub fn view_mut<'a>( &'a mut self, layout: &'a Layout, ) -> Result<TensorViewMut<'a>>"
+  ]
+ },
+ {
+  "name": "TensorView",
+  "module": "",
+  "decl": "pub struct TensorView<'a> { /* private fields */ }",
+  "methods": [
+   "pub fn from_slice(data: &'a [f32], layout: &'a Layout) -> Result<Self>",
+   "pub fn layout(&self) -> &Layout",
+   "pub fn get(&self, coordinates: &[usize]) -> Option<&'a f32>",
+   "pub fn as_slice(&self) -> Option<&'a [f32]>",
+   "pub fn iter(&self) -> Elements<'a> ⓘ",
+   "pub fn to_tensor(&self) -> Result<Tensor>"
+  ]
+ },
+ {
+  "name": "TensorViewMut",
+  "module": "",
+  "decl": "pub struct TensorViewMut<'a> { /* private fields */ }",
+  "methods": [
+   "pub fn from_slice(data: &'a mut [f32], layout: &'a Layout) -> Result<Self>",
+   "pub fn layout(&self) -> &Layout",
+   "pub fn as_view(&self) -> TensorView<'_>",
+   "pub fn get_mut(&mut self, coordinates: &[usize]) -> Option<&mut f32>",
+   "pub fn as_slice_mut(&mut self) -> Option<&mut [f32]>",
+   "pub fn iter_mut(&mut self) -> ElementsMut<'_> ⓘ"
+  ]
+ },
+ {
+  "name": "Tracked",
+  "module": "",
+  "decl": "pub struct Tracked<T: Trackable> { /* private fields */ }",
+  "methods": [
+   "pub fn new(value: T) -> Result<Self>",
+   "pub fn read(&self) -> &T",
+   "pub fn write(&mut self) -> Result<&mut T>",
+   "pub fn version(&self) -> StorageVersion",
+   "pub fn check_version(&self, saved: StorageVersion) -> Result<&T>",
+   "pub fn into_inner(self) -> T"
+  ]
+ },
+ {
+  "name": "WriteGuard",
+  "module": "",
+  "decl": "pub struct WriteGuard<'a, T: Trackable> { /* private fields */ }",
+  "methods": []
+ },
+ {
+  "name": "Trackable",
+  "module": "",
+  "decl": "pub trait Trackable: Sealed { // Required method fn shape(&self) -> &Shape; }",
+  "methods": [
+   "fn shape(&self) -> &Shape"
+  ]
+ },
+ {
+  "name": "Result",
+  "module": "",
+  "decl": "pub enum Result<T> { Ok(T), Err(Error), }",
+  "methods": []
+ }
+]

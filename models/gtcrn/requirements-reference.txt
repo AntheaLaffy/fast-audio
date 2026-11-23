@@ -1,0 +1,3 @@
+# Install the platform-specific PyTorch environment separately; these are CPU-reference pins.
+numpy==2.5.4
+einops==0.7.0

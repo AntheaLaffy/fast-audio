@@ -1,0 +1,43 @@
+[package]
+name = "fast-audio"
+version = "0.1.0-alpha.1"
+edition = "2024"
+rust-version = "1.87"
+description = "Performance-first audio deep learning primitives for Intel CPUs and NVIDIA GPUs"
+license = "MIT"
+repository = "https://github.com/AntheaLaffy/fast-audio"
+documentation = "https://docs.rs/fast-audio"
+readme = "README.md"
+keywords = ["audio", "tensor", "autograd", "dsp", "cuda"]
+categories = ["science", "multimedia::audio"]
+include = [
+    "/Cargo.toml", "/Cargo.lock", "/build.rs", "/LICENSE", "/README.md",
+    "/src/**/*.rs", "/native/*.c", "/native/*.cpp", "/native/*.cu", "/native/*.h",
+    "/examples/**/*.rs", "/tests/*.rs", "/models/gtcrn/LICENSE",
+    "/benchmarks/workloads.json", "/benchmarks/protocols/training-characterization-v1.json",
+]
+
+[features]
+default = []
+mkl = []
+cuda = []
+onednn = []
+cudnn = ["cuda"]
+
+[dependencies]
+rustfft = "6.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[build-dependencies]
+cc = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+undocumented_unsafe_blocks = "deny"
